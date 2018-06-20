@@ -9,7 +9,7 @@ import os
 import logging
 import difflib
 import itertools
-import Image
+from PIL import Image
 import glob
 
 log = logging.getLogger()
@@ -51,6 +51,7 @@ class Token(object):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
 		self.name = 'defaultName'
+		self.size = 'medium'
 
 	# XXX system dependant ?
 	@property
@@ -100,6 +101,7 @@ class Token(object):
 
 	def zipme(self):
 		"""Zip the token into a rptok file."""
+		if not os.path.exists('build'): os.makedirs('build')
 		with zipfile.ZipFile(os.path.join('build', '%s.rptok'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
