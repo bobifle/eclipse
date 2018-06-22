@@ -35,9 +35,9 @@
   <name>{{token.name}}</name>
   <ownerType>0</ownerType>
   <tokenShape>TOP_DOWN</tokenShape>
-  <tokenType>NPC</tokenType>
+  <tokenType>{{token.type}}</tokenType>
   <layer>TOKEN</layer>
-  <propertyType>NPC</propertyType>
+  <propertyType>{{token.prop_type}}</propertyType>
   <isFlippedX>false</isFlippedX>
   <isFlippedY>false</isFlippedY>
   <sightType>Normal</sightType>

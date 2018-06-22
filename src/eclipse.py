@@ -82,7 +82,7 @@ class Prop(object):
 
 	def render(self):
 		return jinja2.Template('''      <entry>
-	    <string>{{prop.name.lower()}}</string>
+	    <string>{{prop.shortname.lower()}}</string>
 	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
 	      <key>{{prop.shortname}}</key>
 	      <value class="string">{{prop.value}}</value>
@@ -123,6 +123,12 @@ class Token(object):
 
 	@property
 	def guid(self):	return ''
+
+	@property
+	def type(self): return 'PC'
+
+	@property
+	def prop_type(self): return 'Eclipse'
 
 	@property
 	def content_xml(self):
