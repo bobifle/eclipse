@@ -6,6 +6,10 @@ import io
 import hashlib
 import zipfile
 import os
+import sys
+try:
+	import coloredlogs # optional
+except ImportError: pass
 import logging
 import difflib
 import itertools
@@ -15,19 +19,18 @@ import glob
 log = logging.getLogger()
 
 data='''
-{"name" : "Bob", "attributes": {"som":5, "ref": 1}}
+{"_type" : "Character", "name" : "Bob",
+	"attributes": [
+		{"somatic":5},
+		{"reflex": 1},
+		{"savvy": 8},
+		{"intuition": 9},
+		{"cognition": 12},
+		{"coordination" : 3}
+		]}
 '''
 
 imglibs = [ 'imglib', ]
-
-md5Template = '''<net.rptools.maptool.model.Asset>
-  <id>
-	<id>{{md5}}</id>
-  </id>
-  <name>{{name}}</name>
-  <extension>{{extension}}</extension>
-  <image/>
-</net.rptools.maptool.model.Asset>'''
 
 _jenv = None
 
@@ -39,6 +42,7 @@ def jenv():
 
 
 class Campaign(object):
+	def __repr__(self): return 'Cmpgn<%s>' % self.name
 
 	@property
 	def name(self): return 'dft'
@@ -54,7 +58,8 @@ class Campaign(object):
 		return content or ''
 
 	def zipme(self):
-		"""Zip the token into a rptok file."""
+		"""Zip the Campaing into a cmpgn file."""
+		log.info("Zipping %s" % self)
 		if not os.path.exists('build'): os.makedirs('build')
 		with zipfile.ZipFile(os.path.join('build', '%s.cmpgn'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
@@ -65,12 +70,16 @@ class Prop(object):
 	def __init__(self, name, value):
 		self.name = name
 		self.value = value
-	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.name, self.value)
+	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
+
+	@property
+	def shortname(self): return self.name[:3].capitalize()
+
 	def render(self):
 		return jinja2.Template('''      <entry>
 	    <string>{{prop.name.lower()}}</string>
 	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
-	      <key>{{prop.name}}</key>
+	      <key>{{prop.shortname}}</key>
 	      <value class="string">{{prop.value}}</value>
 	      <outer-class reference="../../../.."/>
 	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
@@ -133,6 +142,7 @@ class Token(object):
 
 	def zipme(self):
 		"""Zip the token into a rptok file."""
+		log.info("Zipping %s" % self)
 		if not os.path.exists('build'): os.makedirs('build')
 		with zipfile.ZipFile(os.path.join('build', '%s.rptok'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
@@ -140,7 +150,7 @@ class Token(object):
 			log.debug('Token image md5 %s' % self.md5)
 			# default image for the token, right now it's a brown bear
 			# zip the xml file named with the md5 containing the asset properties
-			zipme.writestr('assets/%s' % self.md5, jinja2.Template(md5Template).render(name=self.name, extension='png', md5=self.md5))
+			zipme.writestr('assets/%s' % self.md5, jinja2.Template('md5.template').render(name=self.name, extension='png', md5=self.md5))
 			# zip the img itself
 			out = io.BytesIO() ; self.img.save(out, format='PNG')
 			zipme.writestr('assets/%s.png' % self.md5, out.getvalue())
@@ -181,7 +191,8 @@ class Character(Token):
 
 	@classmethod
 	def from_json(cls, dct):
-		if "name" in dct and "attributes" in dct:
+		_type = dct.get("_type", None)
+		if _type is not None and _type.lower() == "character":
 			ret = cls()
 			for k,v in dct.iteritems(): setattr(ret, k, v)
 			return ret
@@ -190,7 +201,7 @@ class Character(Token):
 	def __repr__(self): return 'Char<%s>' % self.name
 
 	@property
-	def props(self): return [Prop('som', self.attributes['som'])]
+	def props(self): return [Prop(*next(attr.iteritems())) for attr in self.attributes]
 
 	@property
 	def states(self): return []
@@ -199,7 +210,8 @@ class Character(Token):
 	def macros(self): return []
 
 if __name__== '__main__':
+	if hasattr(sys.modules[__name__], "coloredlogs") : coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
 	logging.basicConfig(level=logging.INFO)
 	x = json.loads(data, object_hook = Character.from_json)
 	x.zipme()
-	Campaign().zipme()
+	cmpgn = Campaign().zipme()
