@@ -19,15 +19,24 @@ import glob
 log = logging.getLogger()
 
 data='''
-{"_type" : "Character", "name" : "Bob",
+{	"_type" : "Character", 
+	"name" : "Bob",
 	"attributes": [
-		{"somatic":5},
+		{"somatics":5},
 		{"reflex": 1},
 		{"savvy": 8},
 		{"intuition": 9},
 		{"cognition": 12},
-		{"coordination" : 3}
-		]}
+		{"coordination" : 3},
+		{"willpower" : 7}
+		],
+	"pools": [
+		{"insight":0},
+		{"moxie":0},
+		{"vigor":0},
+		{"flex": 0}
+		]
+}
 '''
 
 imglibs = [ 'imglib', ]
@@ -48,6 +57,12 @@ class Campaign(object):
 
 	def __repr__(self): return 'Cmpgn<%s>' % self.name
 
+	def setProps(self, token):
+		"""Set campaign properties using the given token as reference"""
+		self.props = []
+		for prop in token.props:
+			self.props.append(CProp.fromTProp(prop))
+
 	@property
 	def content_xml(self):
 		content = jenv().get_template('cmpgn_content.template').render(cmpgn=self)
@@ -66,25 +81,55 @@ class Campaign(object):
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
 
+class CProp(object):
+	"""Campaign property."""
+	def __init__(self, name, showOnSheet, defaultValue):
+		self.name=name
+		self._showOnSheet = showOnSheet
+		self.defaultValue = defaultValue
+	@classmethod
+	def fromTProp(cls, token_prop):
+		return cls(token_prop.name, False, '')
+	def __repr__(self): return '%s<%s>' % (self.__class__.__name__, self.name)
+	@property
+	def shortname(self): return ''
+	@property
+	def showOnSheet(self): return "true" if self._showOnSheet else 'false'
+	@showOnSheet.setter
+	def showOnSheet(self, v): self._showOnSheet = v
+	def render(self):
+		return jinja2.Template('''
+           <net.rptools.maptool.model.TokenProperty>
+              <name>{{prop.name}}</name>
+	      {%if prop.shortname %}<shortName>{{prop.shortname}}</shortName>}{%endif%}
+              <highPriority>{{prop.showOnSheet}}</highPriority>
+              <ownerOnly>false</ownerOnly>
+              <gmOnly>false</gmOnly>
+              <defaultValue>{{prop.defaultValue}}</defaultValue>
+            </net.rptools.maptool.model.TokenProperty>''').render(prop=self)
 
-class Prop(object):
+class ECampaign(Campaign):
+	"""Eclipse Phase campaign."""
+	def setProps(self, token):
+		Campaign.setProps(self, token)
+		self.props.append(CProp("Aptitudes", True, "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"))
+		self.props.append(CProp("Pools", True, "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"))
+
+class TProp(object):
+	"""Token property"""
 	def __init__(self, name, value):
 		self.name = name
 		self.value = value
-		self._statsheet= True # visible on statsheet ?
 	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
 
 	@property
-	def shortname(self): return self.name[:3].capitalize()
-
-	@property
-	def statsheet(self): return "true" if self._statsheet else 'false'
+	def shortname(self): return self.name[:3].upper()
 
 	def render(self):
 		return jinja2.Template('''      <entry>
-	    <string>{{prop.shortname.lower()}}</string>
+	    <string>{{prop.name.lower()}}</string>
 	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
-	      <key>{{prop.shortname}}</key>
+	      <key>{{prop.name}}</key>
 	      <value class="string">{{prop.value}}</value>
 	      <outer-class reference="../../../.."/>
 	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
@@ -111,6 +156,10 @@ class Token(object):
 			'huge':       'fwABAdBlFSoHAAAAKgABAA==',
 			'gargantuan': 'fwABAdFlFSoIAAAAKgABAQ==',
 		}[self.size.lower()]
+	
+	def __getattr__(self, attr):
+		for prop in self.props:
+			if prop.name.lower() == attr.lower(): return prop
 
 	@property
 	def macros(self): raise NotImplementedError
@@ -196,7 +245,6 @@ class Token(object):
 
 class Character(Token):
 	"Eclipse Character"
-
 	@classmethod
 	def from_json(cls, dct):
 		_type = dct.get("_type", None)
@@ -209,7 +257,7 @@ class Character(Token):
 	def __repr__(self): return 'Char<%s>' % self.name
 
 	@property
-	def props(self): return [Prop(*next(attr.iteritems())) for attr in self.attributes]
+	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools)]
 
 	@property
 	def states(self): return []
@@ -224,7 +272,6 @@ if __name__== '__main__':
 	logging.basicConfig(level=logging.INFO)
 	bob = json.loads(data, object_hook = Character.from_json)
 	bob.zipme()
-	cmpgn = Campaign('dft')
-	for prop in bob.props:
-		cmpgn.props.append(prop)
+	cmpgn = ECampaign('dft')
+	cmpgn.setProps(bob)
 	cmpgn.zipme()

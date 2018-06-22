@@ -98,15 +98,7 @@
         <entry>
           <string>Eclipse</string>
           <list>
-			{% for prop in cmpgn.props %}
-            <net.rptools.maptool.model.TokenProperty>
-              <name>{{prop.name}}</name>
-              <shortName>{{prop.shortname}}</shortName>
-              <highPriority>{{prop.statsheet}}</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-		 	{% endfor %}
+	  {% for prop in cmpgn.props %}{{prop.render()}}{% endfor %}
           </list>
         </entry>
       </tokenTypeMap>
