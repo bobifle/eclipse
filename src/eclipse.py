@@ -42,10 +42,11 @@ def jenv():
 
 
 class Campaign(object):
-	def __repr__(self): return 'Cmpgn<%s>' % self.name
+	def __init__(self, name):
+		self.name = name
+		self.props = []
 
-	@property
-	def name(self): return 'dft'
+	def __repr__(self): return 'Cmpgn<%s>' % self.name
 
 	@property
 	def content_xml(self):
@@ -70,10 +71,14 @@ class Prop(object):
 	def __init__(self, name, value):
 		self.name = name
 		self.value = value
+		self._statsheet= True # visible on statsheet ?
 	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
 
 	@property
 	def shortname(self): return self.name[:3].capitalize()
+
+	@property
+	def statsheet(self): return "true" if self._statsheet else 'false'
 
 	def render(self):
 		return jinja2.Template('''      <entry>
@@ -121,16 +126,13 @@ class Token(object):
 
 	@property
 	def content_xml(self):
-		with open(os.path.join('src','content.template')) as template:
-			t = jinja2.Template(template.read())
-		content = t.render(token=self)
+		content = jenv().get_template('token_content.template').render(token=self)
 		return content or ''
 
 	@property
 	def properties_xml(self):
-		with open(os.path.join('src', 'properties.template')) as template:
-			 t = jinja2.Template(template.read())
-			 return t.render()
+		content = jenv().get_template('token_properties.template').render(token=self)
+		return content or ''
 
 	@property
 	def md5(self):
@@ -210,8 +212,13 @@ class Character(Token):
 	def macros(self): return []
 
 if __name__== '__main__':
-	if hasattr(sys.modules[__name__], "coloredlogs") : coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
+	# initialize the colored logs if the module is installed
+	if hasattr(sys.modules[__name__], "coloredlogs") :
+		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
 	logging.basicConfig(level=logging.INFO)
-	x = json.loads(data, object_hook = Character.from_json)
-	x.zipme()
-	cmpgn = Campaign().zipme()
+	bob = json.loads(data, object_hook = Character.from_json)
+	bob.zipme()
+	cmpgn = Campaign('dft')
+	for prop in bob.props:
+		cmpgn.props.append(prop)
+	cmpgn.zipme()

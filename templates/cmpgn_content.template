@@ -96,90 +96,17 @@
     <campaignProperties>
       <tokenTypeMap>
         <entry>
-          <string>Basic</string>
+          <string>Eclipse</string>
           <list>
+			{% for prop in cmpgn.props %}
             <net.rptools.maptool.model.TokenProperty>
-              <name>Strength</name>
-              <shortName>Str</shortName>
-              <highPriority>false</highPriority>
+              <name>{{prop.name}}</name>
+              <shortName>{{prop.shortname}}</shortName>
+              <highPriority>{{prop.statsheet}}</highPriority>
               <ownerOnly>false</ownerOnly>
               <gmOnly>false</gmOnly>
             </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Dexterity</name>
-              <shortName>Dex</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Constitution</name>
-              <shortName>Con</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Intelligence</name>
-              <shortName>Int</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Wisdom</name>
-              <shortName>Wis</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Charisma</name>
-              <shortName>Char</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>HP</name>
-              <highPriority>true</highPriority>
-              <ownerOnly>true</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>AC</name>
-              <highPriority>true</highPriority>
-              <ownerOnly>true</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Defense</name>
-              <shortName>Def</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Movement</name>
-              <shortName>Mov</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Elevation</name>
-              <shortName>Elv</shortName>
-              <highPriority>true</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
-            <net.rptools.maptool.model.TokenProperty>
-              <name>Description</name>
-              <shortName>Des</shortName>
-              <highPriority>false</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
-            </net.rptools.maptool.model.TokenProperty>
+		 	{% endfor %}
           </list>
         </entry>
       </tokenTypeMap>
