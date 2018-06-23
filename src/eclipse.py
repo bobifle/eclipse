@@ -98,6 +98,10 @@ class Campaign(object):
 		with zipfile.ZipFile(os.path.join('build', '%s.cmpgn'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
+			for token in self.tokens:
+				for name, asset in token.assets.iteritems():
+					zipme.writestr('assets/%s' % asset.md5, jenv().get_template('md5.template').render(name=name, extension='png', md5=asset.md5))
+					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
 class CProp(object):
 	"""Campaign property."""
@@ -116,10 +120,11 @@ class CProp(object):
 	@showOnSheet.setter
 	def showOnSheet(self, v): self._showOnSheet = v
 	def render(self):
-		return jinja2.Template('''
-           <net.rptools.maptool.model.TokenProperty>
+		return jinja2.Template('''            <net.rptools.maptool.model.TokenProperty>
               <name>{{prop.name}}</name>
-	      {%if prop.shortname %}<shortName>{{prop.shortname}}</shortName>}{%endif%}
+	      {% if prop.shortname %}
+	      <shortName>{{prop.shortname}}</shortName>}
+	      {% endif -%}
               <highPriority>{{prop.showOnSheet}}</highPriority>
               <ownerOnly>false</ownerOnly>
               <gmOnly>false</gmOnly>
@@ -157,11 +162,8 @@ class Img(object):
 	def __init__(self, fp):
 		self.bytes = io.BytesIO()
 		self.fp = fp
-		log.error(fp)
 		with Image.open(fp) as img:
-			log.error(img)
 			img.save(self.bytes, format='png')
-		log.error(fp)
 		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
 	@property
 	def md5(self): return self._md5
@@ -183,6 +185,7 @@ class Token(object):
 		self.name = 'defaultName'
 		self.size = 'medium'
 		self.assets = {}
+		self.snapToGrid = "true"
 
 	# XXX system dependant ?
 	@property
@@ -232,6 +235,9 @@ class Token(object):
 		content = jenv().get_template('token_properties.template').render(token=self)
 		return content or ''
 
+	@property
+	def layer(self): raise NotImplementedError
+
 	def render(self): return self.content_xml
 
 	def zipme(self):
@@ -241,23 +247,21 @@ class Token(object):
 		with zipfile.ZipFile(os.path.join('build', '%s.rptok'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
-			im = self.assets['icon']
-			log.error('Token image md5 %s' % im.md5)
-			log.error('Token image md5 %s' % im.md5)
 			# default image for the token, right now it's a brown bear
 			# zip the xml file named with the md5 containing the asset properties
-			zipme.writestr('assets/%s' % im.md5, jenv().get_template('md5.template').render(name=self.name, extension='png', md5=im.md5))
+			zipme.writestr('assets/%s' % self.icon.md5, jenv().get_template('md5.template').render(name=self.name, extension='png', md5=self.icon.md5))
 			# zip the img itself
-			zipme.writestr('assets/%s.png' % im.md5, im.bytes.getvalue())
+			zipme.writestr('assets/%s.png' % self.icon.md5, self.icon.bytes.getvalue())
 			# build thumbnails
-			zipme.writestr('thumbnail', im.thumbnail(50,50).getvalue())
-			zipme.writestr('thumbnail_large', im.thumbnail(500,500).getvalue())
+			zipme.writestr('thumbnail', self.icon.thumbnail(50,50).getvalue())
+			zipme.writestr('thumbnail_large', self.icon.thumbnail(500,500).getvalue())
 
 	@property
-	def img(self):
+	def icon(self):
+		img = self.assets.get("icon", None)
 		# try to fetch an appropriate image from the imglib directory
 		# using a stupid heuristic: the image / token.name match ratio
-		if self._img is self.sentinel: # cache to property
+		if img is None:
 			# compute the diff ratio for the given name compared to the token name
 			ratio = lambda name: difflib.SequenceMatcher(None, name.lower(), self.name.lower()).ratio()
 			# morph "/abc/def/anyfile.png" into "anyfile"
@@ -272,19 +276,19 @@ class Token(object):
 				bfpath, bratio = max(itertools.chain(ratios, [('', 0)]), key = lambda i: i[1])
 				log.debug("Best match from the img lib is %s(%s)" % (bfpath, bratio))
 			if bratio > 0.8:
-				self._img = bfpath
+				self.assets['icon'] = Img(bfpath)
 			else:
-				self._img = os.path.join('imglib', 'dft.png')
-		return self._img
-	@img.setter
-	def img(self, fp): self._img = fp
+				self.assets['icon'] = Img(os.path.join('imglib', 'dft.png'))
+		return self.assets.get('icon', None)
+	@icon.setter
+	def icon(self, fp): self.assets['icon'] = Img(fp)
 
 	@property
 	def portrait(self): 
 		portrait = self.assets.get('portrait', None)
 		if portrait is None:
-			if self._img:
-				fp = self._img.replace('.png', '_p.png')
+			if self.icon:
+				fp = self.icon.filename.replace('.png', '_p.png')
 				if os.path.exists(fp):
 					self.assests['portrait'] = Img(fp)
 			
@@ -309,12 +313,27 @@ class Character(Token):
 
 	@property
 	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
-
 	@property
 	def states(self): return []
-
 	@property
 	def macros(self): return []
+	@property
+	def layer(self): return 'TOKEN'
+
+class IToken(Token):
+	def __init__(self, *args, **kwargs):
+		Token.__init__(self, *args, **kwargs)
+		self.snapToGrid = 'false'
+	@property
+	def props(self): return []
+	@property
+	def states(self): return []
+	@property
+	def macros(self): return []
+	@property
+	def layer(self): return 'BACKGROUND'
+	@property
+	def type(self): return 'NPC'
 
 if __name__== '__main__':
 	# initialize the colored logs if the module is installed
@@ -324,8 +343,10 @@ if __name__== '__main__':
 	amal = json.loads(tokens, object_hook = Character.from_json)
 	amal.assets['icon'] = Img('imglib/arachnoid.png')
 	amal.assets['portrait'] = Img('imglib/arachnoid_p.png')
-	log.error('token guid: %s', amal.guid)
 	amal.zipme()
 	cmpgn = ECampaign('dft')
 	cmpgn.setProps(amal)
+	main_scene = IToken()
+	main_scene.name = 'main_scene'
+	cmpgn.tokens.append(main_scene)
 	cmpgn.zipme()

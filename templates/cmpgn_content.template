@@ -42,6 +42,12 @@
                   <xmax>50.0</xmax>
                 </sun.awt.geom.Order1>
               </curves>
+              <cachedBounds class="java.awt.geom.Rectangle2D$Double">
+                <x>0.0</x>
+                <y>0.0</y>
+                <width>50.0</width>
+                <height>50.0</height>
+              </cachedBounds>
             </cellShape>
           </grid>
           <gridColor>-16777216</gridColor>
@@ -56,11 +62,18 @@
           <labels class="linked-hash-map"/>
           <tokenMap>
           {% for token in cmpgn.tokens %}
-          {{token.render()}}
+          <entry>
+            <net.rptools.maptool.model.GUID>
+              <baGUID>{{token.guid}}</baGUID>
+            </net.rptools.maptool.model.GUID>
+{{token.render()}}
+          </entry>
           {% endfor%}
           </tokenMap>
           <exposedAreaMeta/>
-          <tokenOrderedList class="linked-list"/>
+          <tokenOrderedList class="linked-list">
+            <net.rptools.maptool.model.Token reference="../../tokenMap/entry/net.rptools.maptool.model.Token"/>
+          </tokenOrderedList>
           <initiativeList>
             <tokens/>
             <current>-1</current>
@@ -102,7 +115,9 @@
         <entry>
           <string>Eclipse</string>
           <list>
-	  {% for prop in cmpgn.props %}{{prop.render()}}{% endfor %}
+	  {%- for prop in cmpgn.props %}
+	    {{prop.render()}}
+          {%- endfor %}
           </list>
         </entry>
       </tokenTypeMap>
@@ -745,15 +760,20 @@
     <macroButtonProperties/>
     <macroButtonLastIndex>0</macroButtonLastIndex>
   </campaign>
-  <assetMap/>
+  <assetMap>
+    <entry>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
+      <null/>
+    </entry>
+  </assetMap>
   <currentZoneId reference="../campaign/zones/entry/net.rptools.maptool.model.GUID"/>
   <currentView>
     <oneToOneScale>1.0</oneToOneScale>
-    <scale>1.0</scale>
+    <scale>0.9302325581395349</scale>
     <scaleIncrement>0.075</scaleIncrement>
-    <zoomLevel>0</zoomLevel>
-    <offsetX>0</offsetX>
-    <offsetY>0</offsetY>
+    <zoomLevel>-1</zoomLevel>
+    <offsetX>10</offsetX>
+    <offsetY>189</offsetY>
     <width>0</width>
     <height>0</height>
     <initialized>false</initialized>
