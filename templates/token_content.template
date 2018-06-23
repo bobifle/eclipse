@@ -33,9 +33,9 @@
                     <net.rptools.maptool.model.ZonePoint reference="../../cellList/net.rptools.maptool.model.ZonePoint"/>
                   </waypointList>
                 </lastPath>
-                <snapToScale>false</snapToScale>
-                <width>2660</width>
-                <height>1680</height>
+                <snapToScale>{{token.snapToScale}}</snapToScale>
+                <width>{{token.width}}</width>
+                <height>{{token.height}}</height>
                 <isoWidth>0</isoWidth>
                 <isoHeight>0</isoHeight>
                 <scaleX>1.0</scaleX>

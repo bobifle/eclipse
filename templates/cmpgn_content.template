@@ -42,12 +42,6 @@
                   <xmax>50.0</xmax>
                 </sun.awt.geom.Order1>
               </curves>
-              <cachedBounds class="java.awt.geom.Rectangle2D$Double">
-                <x>0.0</x>
-                <y>0.0</y>
-                <width>50.0</width>
-                <height>50.0</height>
-              </cachedBounds>
             </cellShape>
           </grid>
           <gridColor>-16777216</gridColor>

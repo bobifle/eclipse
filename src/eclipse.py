@@ -163,6 +163,7 @@ class Img(object):
 		self.bytes = io.BytesIO()
 		self.fp = fp
 		with Image.open(fp) as img:
+			self.x, self.y = img.size
 			img.save(self.bytes, format='png')
 		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
 	@property
@@ -186,6 +187,7 @@ class Token(object):
 		self.size = 'medium'
 		self.assets = {}
 		self.snapToGrid = "true"
+		self.snapToScale = "true" # snap to the grid size
 
 	# XXX system dependant ?
 	@property
@@ -224,6 +226,14 @@ class Token(object):
 
 	@property
 	def prop_type(self): return 'Eclipse'
+
+	@property
+	def width(self): 
+		return self.icon.x
+
+	@property
+	def height(self):
+		return self.icon.y
 
 	@property
 	def content_xml(self):
@@ -324,6 +334,7 @@ class IToken(Token):
 	def __init__(self, *args, **kwargs):
 		Token.__init__(self, *args, **kwargs)
 		self.snapToGrid = 'false'
+		self.snapToScale = 'false'
 	@property
 	def props(self): return []
 	@property
