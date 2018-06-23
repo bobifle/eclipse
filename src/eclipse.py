@@ -271,6 +271,21 @@ class Token(object):
 	@img.setter
 	def img(self, fp): self._img = fp
 
+	@property
+	def portrait(self): 
+		portrait = self.assets.get('portrait', None)
+		if portrait is None:
+			if self._img:
+				fp = self._img.replace('.png', '_p.png')
+				if os.path.exists(fp):
+					self.assests['portrait'] = Img(fp)
+			
+		return self.assets.get('portrait', None)
+
+	@portrait.setter
+	def portrait(self, fp): 
+		self.assets['portrait'] = Img(fp)
+
 class Character(Token):
 	"Eclipse Character"
 	@classmethod
@@ -298,7 +313,7 @@ if __name__== '__main__':
 	if hasattr(sys.modules[__name__], "coloredlogs") :
 		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
 	logging.basicConfig(level=logging.INFO)
-	amal = json.loads(data, object_hook = Character.from_json)
+	amal = json.loads(tokens, object_hook = Character.from_json)
 	amal.assets['icon'] = Img('imglib/arachnoid.png')
 	amal.assets['portrait'] = Img('imglib/arachnoid_p.png')
 	amal.zipme()

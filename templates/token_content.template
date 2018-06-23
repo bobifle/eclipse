@@ -40,6 +40,11 @@
   <propertyType>{{token.prop_type}}</propertyType>
   <isFlippedX>false</isFlippedX>
   <isFlippedY>false</isFlippedY>
+{%if token.portrait %}
+  <portraitImage>
+    <id>{{ token.portrait.md5}}</id>
+  </portraitImage>
+{% endif %}
   <sightType>Normal</sightType>
   <hasSight>false</hasSight>
   <sizeMap>
