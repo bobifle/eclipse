@@ -18,25 +18,41 @@ import glob
 
 log = logging.getLogger()
 
-data='''
+tokens='''
 {	"_type" : "Character", 
-	"name" : "Bob",
+	"name" : "Amal",
 	"attributes": [
-		{"somatics":5},
-		{"reflex": 1},
-		{"savvy": 8},
-		{"intuition": 9},
-		{"cognition": 12},
-		{"coordination" : 3},
-		{"willpower" : 7}
+		{"somatics":15},
+		{"reflex": 20},
+		{"savvy": 15},
+		{"intuition": 20},
+		{"cognition": 15},
+		{"willpower" : 15}
 		],
 	"pools": [
-		{"insight":0},
+		{"insight":1},
 		{"moxie":0},
-		{"vigor":0},
-		{"flex": 0}
+		{"vigor":4},
+		{"flex": 1},
+		{"ego_flex": 1}
+		],
+	"skills": [
+		{"melee":55},
+		{"psi":0}
 		]
+
 }
+'''
+
+campaign_props='''[
+{"name": "aptitudes", "showOnSheet": true, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
+{"name": "pools", "showOnSheet": true, "value": "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"},
+{"name": "initiative", "showOnSheet": true, "value": "{(reflex + intuition)/5}"},
+{"name": "lucidity", "showOnSheet": true, "value": "{willpower*2}"},
+{"name": "insanity", "showOnSheet": true, "value": "{lucidity*2}"},
+{"name": "trauma", "showOnSheet": true, "value": "{lucidity/5}"},
+{"name": "infection", "showOnSheet": true, "value": "{psi*10}"}
+]
 '''
 
 imglibs = [ 'imglib', ]
@@ -112,8 +128,8 @@ class ECampaign(Campaign):
 	"""Eclipse Phase campaign."""
 	def setProps(self, token):
 		Campaign.setProps(self, token)
-		self.props.append(CProp("Aptitudes", True, "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"))
-		self.props.append(CProp("Pools", True, "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"))
+		for prop in json.loads(campaign_props):
+			self.props.append(CProp(prop['name'], prop['showOnSheet'], prop['value']))
 
 class TProp(object):
 	"""Token property"""
@@ -135,6 +151,26 @@ class TProp(object):
 	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
 	  </entry>''').render(prop=self)
 
+class Img(object):
+	def __init__(self, fp):
+		self.bytes = io.BytesIO()
+		self.fp = fp
+		log.error(fp)
+		with Image.open(fp) as img:
+			log.error(img)
+			img.save(self.bytes, format='png')
+		log.error(fp)
+		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
+	@property
+	def md5(self): return self._md5
+
+	def thumbnail(self, x,y):
+		thumb = io.BytesIO()
+		with Image.open(self.fp, 'r') as img:
+			img.thumbnail((x,y))
+			img.save(thumb, format='png')
+		return thumb
+
 class Token(object):
 	sentinel = object()
 
@@ -143,6 +179,7 @@ class Token(object):
 		self._img = self.sentinel
 		self.name = 'defaultName'
 		self.size = 'medium'
+		self.assets = {}
 
 	# XXX system dependant ?
 	@property
@@ -189,14 +226,6 @@ class Token(object):
 		content = jenv().get_template('token_properties.template').render(token=self)
 		return content or ''
 
-	@property
-	def md5(self):
-		if self._md5 is self.sentinel: # cache this expensive property
-			out = io.BytesIO()
-			self.img.save(out, format='png')
-			self._md5 = hashlib.md5(out.getvalue()).hexdigest()
-		return self._md5
-
 	def zipme(self):
 		"""Zip the token into a rptok file."""
 		log.info("Zipping %s" % self)
@@ -204,20 +233,17 @@ class Token(object):
 		with zipfile.ZipFile(os.path.join('build', '%s.rptok'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
-			log.debug('Token image md5 %s' % self.md5)
+			im = self.assets['icon']
+			log.error('Token image md5 %s' % im.md5)
+			log.error('Token image md5 %s' % im.md5)
 			# default image for the token, right now it's a brown bear
 			# zip the xml file named with the md5 containing the asset properties
-			zipme.writestr('assets/%s' % self.md5, jinja2.Template('md5.template').render(name=self.name, extension='png', md5=self.md5))
+			zipme.writestr('assets/%s' % im.md5, jenv().get_template('md5.template').render(name=self.name, extension='png', md5=im.md5))
 			# zip the img itself
-			out = io.BytesIO() ; self.img.save(out, format='PNG')
-			zipme.writestr('assets/%s.png' % self.md5, out.getvalue())
+			zipme.writestr('assets/%s.png' % im.md5, im.bytes.getvalue())
 			# build thumbnails
-			out = io.BytesIO()
-			im = self.img.copy() ; im.thumbnail((50,50)) ; im.save(out, format='PNG')
-			zipme.writestr('thumbnail', out.getvalue())
-			out = io.BytesIO()
-			im = self.img.copy() ; im.thumbnail((500,500)) ; im.save(out, format='PNG')
-			zipme.writestr('thumbnail_large', out.getvalue())
+			zipme.writestr('thumbnail', im.thumbnail(50,50).getvalue())
+			zipme.writestr('thumbnail_large', im.thumbnail(500,500).getvalue())
 
 	@property
 	def img(self):
@@ -238,10 +264,12 @@ class Token(object):
 				bfpath, bratio = max(itertools.chain(ratios, [('', 0)]), key = lambda i: i[1])
 				log.debug("Best match from the img lib is %s(%s)" % (bfpath, bratio))
 			if bratio > 0.8:
-				self._img = Image.open(bfpath, 'r')
+				self._img = bfpath
 			else:
-				self._img = Image.open(os.path.join('imglib', 'dft.png'), 'r')
+				self._img = os.path.join('imglib', 'dft.png')
 		return self._img
+	@img.setter
+	def img(self, fp): self._img = fp
 
 class Character(Token):
 	"Eclipse Character"
@@ -257,7 +285,7 @@ class Character(Token):
 	def __repr__(self): return 'Char<%s>' % self.name
 
 	@property
-	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools)]
+	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
 
 	@property
 	def states(self): return []
@@ -270,8 +298,10 @@ if __name__== '__main__':
 	if hasattr(sys.modules[__name__], "coloredlogs") :
 		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
 	logging.basicConfig(level=logging.INFO)
-	bob = json.loads(data, object_hook = Character.from_json)
-	bob.zipme()
+	amal = json.loads(data, object_hook = Character.from_json)
+	amal.assets['icon'] = Img('imglib/arachnoid.png')
+	amal.assets['portrait'] = Img('imglib/arachnoid_p.png')
+	amal.zipme()
 	cmpgn = ECampaign('dft')
-	cmpgn.setProps(bob)
+	cmpgn.setProps(amal)
 	cmpgn.zipme()

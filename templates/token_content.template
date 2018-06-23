@@ -7,7 +7,7 @@
     <entry>
       <null/>
       <net.rptools.lib.MD5Key>
-        <id>{{token.md5}}</id>
+        <id>{{token.assets['icon'].md5}}</id>
       </net.rptools.lib.MD5Key>
     </entry>
   </imageAssetMap>
