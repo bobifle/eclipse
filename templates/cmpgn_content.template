@@ -54,7 +54,11 @@
           <objectDrawables class="linked-list"/>
           <backgroundDrawables class="linked-list"/>
           <labels class="linked-hash-map"/>
-          <tokenMap/>
+          <tokenMap>
+          {% for token in cmpgn.tokens %}
+          {{token.render()}}
+          {% endfor%}
+          </tokenMap>
           <exposedAreaMeta/>
           <tokenOrderedList class="linked-list"/>
           <initiativeList>
@@ -84,7 +88,7 @@
           </boardPosition>
           <drawBoard>true</drawBoard>
           <boardChanged>false</boardChanged>
-          <name>Grasslands</name>
+          <name>Library</name>
           <isVisible>true</isVisible>
           <visionType>OFF</visionType>
           <tokenSelection>ALL</tokenSelection>

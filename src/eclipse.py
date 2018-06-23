@@ -7,6 +7,8 @@ import hashlib
 import zipfile
 import os
 import sys
+import uuid
+import base64
 try:
 	import coloredlogs # optional
 except ImportError: pass
@@ -65,11 +67,11 @@ def jenv():
 		_jenv = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
 	return _jenv
 
-
 class Campaign(object):
 	def __init__(self, name):
 		self.name = name
 		self.props = []
+		self.tokens = []
 
 	def __repr__(self): return 'Cmpgn<%s>' % self.name
 
@@ -177,6 +179,7 @@ class Token(object):
 	def __init__(self):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
+		self._guid = self.sentinel
 		self.name = 'defaultName'
 		self.size = 'medium'
 		self.assets = {}
@@ -208,7 +211,10 @@ class Token(object):
 	def states(self): raise NotImplementedError
 
 	@property
-	def guid(self):	return ''
+	def guid(self):	
+		if self._guid is self.sentinel:
+			self._guid = base64.b64encode(uuid.uuid4().bytes)
+		return self._guid
 
 	@property
 	def type(self): return 'PC'
@@ -225,6 +231,8 @@ class Token(object):
 	def properties_xml(self):
 		content = jenv().get_template('token_properties.template').render(token=self)
 		return content or ''
+
+	def render(self): return self.content_xml
 
 	def zipme(self):
 		"""Zip the token into a rptok file."""
@@ -316,6 +324,7 @@ if __name__== '__main__':
 	amal = json.loads(tokens, object_hook = Character.from_json)
 	amal.assets['icon'] = Img('imglib/arachnoid.png')
 	amal.assets['portrait'] = Img('imglib/arachnoid_p.png')
+	log.error('token guid: %s', amal.guid)
 	amal.zipme()
 	cmpgn = ECampaign('dft')
 	cmpgn.setProps(amal)
