@@ -188,6 +188,7 @@ class Token(object):
 		self.assets = {}
 		self.snapToGrid = "true"
 		self.snapToScale = "true" # snap to the grid size
+		self.x, self.y = 0,0
 
 	# XXX system dependant ?
 	@property
@@ -360,4 +361,5 @@ if __name__== '__main__':
 	main_scene = IToken()
 	main_scene.name = 'main_scene'
 	cmpgn.tokens.append(main_scene)
+	cmpgn.tokens.append(amal)
 	cmpgn.zipme()

@@ -3,9 +3,6 @@
                   <baGUID>{{token.guid}}</baGUID>
                 </id>
                 <beingImpersonated>false</beingImpersonated>
-                <exposedAreaGUID>
-                  <baGUID>VQVgnhkRQnOa+bJLXQ7vJA==</baGUID>
-                </exposedAreaGUID>
                 <imageAssetMap>
                   <entry>
                     <null/>
@@ -14,30 +11,19 @@
                     </net.rptools.lib.MD5Key>
                   </entry>
                 </imageAssetMap>
-                <x>-307</x>
-                <y>-222</y>
+                <x>{{token.x}}</x>
+                <y>{{token.y}}</y>
                 <z>2</z>
                 <anchorX>0</anchorX>
                 <anchorY>0</anchorY>
                 <sizeScale>1.0</sizeScale>
-                <lastX>-304</lastX>
-                <lastY>-237</lastY>
-                <lastPath>
-                  <cellList class="linked-list">
-                    <net.rptools.maptool.model.ZonePoint>
-                      <x>-307</x>
-                      <y>-222</y>
-                    </net.rptools.maptool.model.ZonePoint>
-                  </cellList>
-                  <waypointList class="linked-list">
-                    <net.rptools.maptool.model.ZonePoint reference="../../cellList/net.rptools.maptool.model.ZonePoint"/>
-                  </waypointList>
-                </lastPath>
+                <lastX>0</lastX>
+                <lastY>0</lastY>
                 <snapToScale>{{token.snapToScale}}</snapToScale>
                 <width>{{token.width}}</width>
                 <height>{{token.height}}</height>
-                <isoWidth>0</isoWidth>
-                <isoHeight>0</isoHeight>
+                <isoWidth>{{token.width}}</isoWidth>
+                <isoHeight>{{token.height}}</isoHeight>
                 <scaleX>1.0</scaleX>
                 <scaleY>1.0</scaleY>
                 <sizeMap>

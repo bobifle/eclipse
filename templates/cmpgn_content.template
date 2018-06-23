@@ -67,6 +67,9 @@
           <exposedAreaMeta/>
           <tokenOrderedList class="linked-list">
             <net.rptools.maptool.model.Token reference="../../tokenMap/entry/net.rptools.maptool.model.Token"/>
+{%- for token in cmpgn.tokens[1:] %}
+            <net.rptools.maptool.model.Token reference="../../tokenMap/entry[{{loop.index+1}}]/net.rptools.maptool.model.Token"/>
+{%- endfor %}
           </tokenOrderedList>
           <initiativeList>
             <tokens/>
@@ -759,6 +762,12 @@
       <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
       <null/>
     </entry>
+{%- for token in cmpgn.tokens[1:] %}
+    <entry>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index+1}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
+      <null/>
+    </entry>
+{%- endfor %}
   </assetMap>
   <currentZoneId reference="../campaign/zones/entry/net.rptools.maptool.model.GUID"/>
   <currentView>
