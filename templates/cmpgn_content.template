@@ -758,23 +758,17 @@
     <macroButtonLastIndex>0</macroButtonLastIndex>
   </campaign>
   <assetMap>
+{%- for token in cmpgn.tokens[] %}
     <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
       <null/>
     </entry>
+{%- if token.portrait %}
     <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry/net.rptools.maptool.model.Token/portraitImage"/>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/portraitImage"/>
       <null/>
     </entry>
-{%- for token in cmpgn.tokens[1:] %}
-    <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index+1}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
-      <null/>
-    </entry>
-    <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index+1}}]/net.rptools.maptool.model.Token/portraitImage"/>
-      <null/>
-    </entry>
+{%- endif %}
 {%- endfor %}
   </assetMap>
   <currentZoneId reference="../campaign/zones/entry/net.rptools.maptool.model.GUID"/>

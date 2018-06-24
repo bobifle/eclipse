@@ -354,8 +354,6 @@ class Token(object):
 				fp = self.icon.fp.replace('.png', '_p.png')
 				if os.path.exists(fp):
 					self.assets['portrait'] = Img(fp)
-				else:
-					self.assets['portrait'] = Img('imglib/dft.png') # all tokens, including bg images should have a portrait, otherwise soemthing I cannot handle serialization of token in campaigns
 			
 		return self.assets.get('portrait', None)
 
