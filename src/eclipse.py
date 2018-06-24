@@ -43,7 +43,8 @@ tokens=[
 	"skills": [
 		{"melee":0},
 		{"psi":0}
-		]
+		],
+	"notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.<p>You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it.</p>"
 }
 ''',
 '''{	"_type" : "Character", 
@@ -67,7 +68,8 @@ tokens=[
 	"skills": [
 		{"melee":0},
 		{"psi":0}
-		]
+		],
+	"notes": ""
 }
 ''',
 '''{	"_type" : "Character", 
@@ -89,9 +91,10 @@ tokens=[
 		{"ego_flex": 1}
 		],
 	"skills": [
-		{"melee":40},
+		{"melee":55},
 		{"psi":0}
-		]
+		],
+	"notes": ""
 }
 ''',
 ]
@@ -237,9 +240,11 @@ class Token(object):
 		self.name = 'defaultName'
 		self.size = 'medium'
 		self.assets = {}
+		self.hasSight = 'false'
 		self.snapToGrid = "true"
 		self.snapToScale = "true" # snap to the grid size
 		self.x, self.y = 0,0
+		self.notes =''
 
 	# XXX system dependant ?
 	@property
@@ -280,12 +285,13 @@ class Token(object):
 	def prop_type(self): return 'Eclipse'
 
 	@property
-	def width(self): 
-		return self.icon.x
+	def width(self): return self.icon.x
 
 	@property
-	def height(self):
-		return self.icon.y
+	def height(self): return self.icon.y
+
+	@property
+	def gmNotes(self): return ''
 
 	@property
 	def content_xml(self):
@@ -353,9 +359,9 @@ class Token(object):
 			if self.icon:
 				fp = self.icon.fp.replace('.png', '_p.png')
 				if os.path.exists(fp):
-					self.assets['portrait'] = Img(fp)
-			
-		return self.assets.get('portrait', None)
+					portrait = Img(fp)
+					self.assets['portrait'] = portrait
+		return portrait
 
 	@portrait.setter
 	def portrait(self, fp): 
@@ -363,6 +369,9 @@ class Token(object):
 
 class Character(Token):
 	"Eclipse Character"
+	def __init__(self, *args, **kwargs):
+		Token.__init__(self, *args, **kwargs)
+		self.hasSight = 'true'
 	@classmethod
 	def from_json(cls, dct):
 		_type = dct.get("_type", None)

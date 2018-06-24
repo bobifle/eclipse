@@ -56,7 +56,9 @@
                 </portraitImage>
 {%- endif %}
                 <sightType>Normal</sightType>
-                <hasSight>false</hasSight>
+                <hasSight>{{token.hasSight}}</hasSight>
+                <notes>{{token.notes|e}}</notes>
+                <gmNotes>{{token.gmNotes|e}}</gmNotes>
                 <state>
 	{%- for state in token.states %}
                   <entry>
