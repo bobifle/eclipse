@@ -20,9 +20,59 @@ import glob
 
 log = logging.getLogger()
 
-tokens='''
-{	"_type" : "Character", 
+tokens=[
+
+'''{	"_type" : "Character", 
+	"name" : "Chi",
+	"morph": "sylph",
+	"attributes": [
+		{"somatics":10},
+		{"reflex": 15},
+		{"savvy": 20},
+		{"intuition": 15},
+		{"cognition": 20},
+		{"willpower" : 20}
+		],
+	"pools": [
+		{"insight":1},
+		{"moxie":3},
+		{"vigor":1},
+		{"flex": 1},
+		{"ego_flex": 1}
+		],
+	"skills": [
+		{"melee":0},
+		{"psi":0}
+		]
+}
+''',
+'''{	"_type" : "Character", 
+	"name" : "Njal",
+	"morph": "wirehead",
+	"attributes": [
+		{"somatics":15},
+		{"reflex": 20},
+		{"savvy": 10},
+		{"intuition": 15},
+		{"cognition": 20},
+		{"willpower" : 15}
+		],
+	"pools": [
+		{"insight":4},
+		{"moxie":0},
+		{"vigor":2},
+		{"flex": 1},
+		{"ego_flex": 1}
+		],
+	"skills": [
+		{"melee":0},
+		{"psi":0}
+		]
+}
+''',
+'''{	"_type" : "Character", 
 	"name" : "Amal",
+	"morph": "arachnoid",
 	"attributes": [
 		{"somatics":15},
 		{"reflex": 20},
@@ -39,12 +89,12 @@ tokens='''
 		{"ego_flex": 1}
 		],
 	"skills": [
-		{"melee":55},
+		{"melee":40},
 		{"psi":0}
 		]
-
 }
-'''
+''',
+]
 
 campaign_props='''[
 {"name": "aptitudes", "showOnSheet": true, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
@@ -100,7 +150,8 @@ class Campaign(object):
 			zipme.writestr('properties.xml', self.properties_xml)
 			for token in self.tokens:
 				for name, asset in token.assets.iteritems():
-					zipme.writestr('assets/%s' % asset.md5, jenv().get_template('md5.template').render(name=name, extension='png', md5=asset.md5))
+					zipme.writestr('assets/%s' % asset.md5, 
+							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
 class CProp(object):
@@ -260,9 +311,10 @@ class Token(object):
 			zipme.writestr('properties.xml', self.properties_xml)
 			# default image for the token, right now it's a brown bear
 			# zip the xml file named with the md5 containing the asset properties
-			zipme.writestr('assets/%s' % self.icon.md5, jenv().get_template('md5.template').render(name=self.name, extension='png', md5=self.icon.md5))
-			# zip the img itself
-			zipme.writestr('assets/%s.png' % self.icon.md5, self.icon.bytes.getvalue())
+			for asset in self.assets.values():
+				zipme.writestr('assets/%s' % asset.md5, jenv().get_template('md5.template').render(name=asset.fp, extension='png', md5=asset.md5))
+				# zip the img itself
+				zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 			# build thumbnails
 			zipme.writestr('thumbnail', self.icon.thumbnail(50,50).getvalue())
 			zipme.writestr('thumbnail_large', self.icon.thumbnail(500,500).getvalue())
@@ -299,9 +351,11 @@ class Token(object):
 		portrait = self.assets.get('portrait', None)
 		if portrait is None:
 			if self.icon:
-				fp = self.icon.filename.replace('.png', '_p.png')
+				fp = self.icon.fp.replace('.png', '_p.png')
 				if os.path.exists(fp):
-					self.assests['portrait'] = Img(fp)
+					self.assets['portrait'] = Img(fp)
+				else:
+					self.assets['portrait'] = Img('imglib/dft.png') # all tokens, including bg images should have a portrait, otherwise soemthing I cannot handle serialization of token in campaigns
 			
 		return self.assets.get('portrait', None)
 
@@ -349,17 +403,21 @@ class IToken(Token):
 
 if __name__== '__main__':
 	# initialize the colored logs if the module is installed
-	if hasattr(sys.modules[__name__], "coloredlogs") :
+	try:
 		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
+	except NameError: pass
 	logging.basicConfig(level=logging.INFO)
-	amal = json.loads(tokens, object_hook = Character.from_json)
-	amal.assets['icon'] = Img('imglib/arachnoid.png')
-	amal.assets['portrait'] = Img('imglib/arachnoid_p.png')
-	amal.zipme()
+	chars = [json.loads(tok, object_hook = Character.from_json) for tok in tokens]
+	for index, char in enumerate(chars):
+		# set their icon
+		char.icon = 'imglib/%s.png'%char.morph
+		# offset characters from 1 grid unit from each other
+		char.x = (index+20)*50
+		char.zipme()
 	cmpgn = ECampaign('dft')
-	cmpgn.setProps(amal)
+	cmpgn.setProps(chars[0])
 	main_scene = IToken()
 	main_scene.name = 'main_scene'
 	cmpgn.tokens.append(main_scene)
-	cmpgn.tokens.append(amal)
+	cmpgn.tokens.extend(chars)
 	cmpgn.zipme()
