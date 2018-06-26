@@ -3,11 +3,12 @@
 import jinja2
 import zipfile
 import os
-import logging
+import json
 
-from util import jenv
+from mtoken import Map
+from util import jenv, getLogger
 
-log = logging.getLogger(__name__)
+log = getLogger(__name__)
 
 class Campaign(object):
 	def __init__(self, name):
@@ -39,6 +40,21 @@ class Campaign(object):
 					zipme.writestr('assets/%s' % asset.md5,
 							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
+
+	def build(self, tokens, cprops):
+		"""Build a campaign given the tokens, properties all json data."""
+		for index, tok in enumerate(tokens):
+			# offset tokens from 1 grid unit from each other
+			tok.x = (index+20)*50
+			tok.zipme()
+		# use the first character properties, and add these as campaign properties as well
+		self.props.extend([CProp.fromTProp(p) for p in tokens[0].props])
+		self.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(cprops)])
+		main_scene = Map()
+		main_scene.name = 'main_scene'
+		self.tokens.append(main_scene)
+		self.tokens.extend(tokens)
+		self.zipme()
 
 class CProp(object):
 	"""Campaign property."""

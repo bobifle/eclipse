@@ -2,15 +2,12 @@
 # -*- coding: utf-8 -*-
 import json
 import optparse
-try:
-	import coloredlogs # optional
-except ImportError: pass
-import logging
 
-from token import Map, Character
+from mtoken import Map, Character
 from cmpgn import Campaign, CProp
+from util import lName, getLogger, configureLogger, parse_args
 
-log = logging.getLogger()
+log = getLogger(lName)
 
 tokens=[
 
@@ -103,32 +100,17 @@ campaign_props='''[
 '''
 
 class ECharacter(Character):
+	# eclipse characters will use their morph name to try finding the proper portrait in the imglib
 	@property
 	def matchImg(self): return self.morph
 
-if __name__== '__main__':
-	# initialize the colored logs if the module is installed
-	try:
-		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
-	except NameError: pass
-	parser = optparse.OptionParser()
-	parser.add_option('-v', '--verbose', dest='verbose', action='count',
-			help='increase the logging level')
-	(options, args) = parser.parse_args()
-	logging.basicConfig(level=logging.INFO-options.verbose*10)
+def main():
+	options, args = parse_args()
+	configureLogger(options.verbose)
 	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
-	for index, char in enumerate(chars):
-		# set their icon
-		# char.icon = 'imglib/%s.png'%char.morph
-		# offset characters from 1 grid unit from each other
-		char.x = (index+20)*50
-		char.zipme()
 	cp = Campaign('eclipse')
-	# use the first character properties, and add these as campaign properties as well
-	cp.props.extend([CProp.fromTProp(p) for p in chars[0].props])
-	cp.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(campaign_props)])
-	main_scene = Map()
-	main_scene.name = 'main_scene'
-	cp.tokens.append(main_scene)
-	cp.tokens.extend(chars)
-	cp.zipme()
+	cp.build(chars, campaign_props)
+	return cp
+
+if __name__== '__main__':
+	cp = main()

@@ -3,20 +3,48 @@
 import jinja2
 import io
 import hashlib
-import logging
+import optparse
 from PIL import Image
+try:
+	import coloredlogs # optional
+except ImportError: pass
+import logging
 
-log = logging.getLogger()
-
+# the jinja environment
 _jenv = None
 
+# Name of the main logger
+lName = 'mtools'
+# the main logger
+mLog = logging.getLogger(lName)
+def getLogger(name): return logging.getLogger(lName+'.'+name)
+# the util sublogger
+log = getLogger(__name__)
+
+def configureLogger(verbose):
+	"""Configure the loggers, do not call twice."""
+	coloredlogs.DEFAULT_FIELD_STYLES['levelname'] = {'color': 'white'}
+	try:
+		#coloredlogs.install(level=logging.INFO-verbose*10, fmt='%(name)s %(levelname)8s %(message)s', logger=mLog)
+		coloredlogs.install(level=logging.INFO-verbose*10, fmt='%(name)s %(levelname)8s %(message)s', logger=mLog)
+	except NameError:
+		logging.getLogger(lName.setLevel(level=logging.INFO-verbose*10))
+
+def parse_args():
+	parser = optparse.OptionParser()
+	parser.add_option('-v', '--verbose', dest='verbose', action='count', default=0,
+			help='increase the logging level')
+	return parser.parse_args()
+
 def jenv():
+	"""Return a jinja environment."""
 	global _jenv
 	if _jenv is None:
 		_jenv = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
 	return _jenv
 
 class Img(object):
+	"""A PIL.Image higher layer for MT assets."""
 	def __init__(self, fp):
 		self.bytes = io.BytesIO()
 		self.fp = fp

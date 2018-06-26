@@ -10,9 +10,9 @@ import itertools
 import glob
 import jinja2
 
-from util import jenv, Img
+from util import jenv, Img, getLogger
 
-log = logging.getLogger(__name__)
+log = getLogger(__name__)
 
 imglibs = [ 'imglib', ]
 
