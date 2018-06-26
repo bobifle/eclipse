@@ -6,7 +6,6 @@ import io
 import hashlib
 import zipfile
 import os
-import sys
 import uuid
 import base64
 try:
@@ -216,18 +215,18 @@ class Img(object):
 	def __init__(self, fp):
 		self.bytes = io.BytesIO()
 		self.fp = fp
-		with Image.open(fp) as img:
-			self.x, self.y = img.size
-			img.save(self.bytes, format='png')
+		img = Image.open(fp)
+		self.x, self.y = img.size
+		img.save(self.bytes, format='png')
 		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
 	@property
 	def md5(self): return self._md5
 
 	def thumbnail(self, x,y):
 		thumb = io.BytesIO()
-		with Image.open(self.fp, 'r') as img:
-			img.thumbnail((x,y))
-			img.save(thumb, format='png')
+		img = Image.open(self.fp)
+		img.thumbnail((x,y))
+		img.save(thumb, format='png')
 		return thumb
 
 class Token(object):
