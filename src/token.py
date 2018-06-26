@@ -12,7 +12,7 @@ import jinja2
 
 from util import jenv, Img
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 imglibs = [ 'imglib', ]
 
@@ -111,6 +111,10 @@ class Token(object):
 			zipme.writestr('thumbnail', self.icon.thumbnail(50,50).getvalue())
 			zipme.writestr('thumbnail_large', self.icon.thumbnail(500,500).getvalue())
 
+	# used by the heuristic trying to find the appropriate image for a token
+	@property
+	def matchImg(self): return self.name
+
 	@property
 	def icon(self):
 		img = self.assets.get("icon", None)
@@ -118,7 +122,7 @@ class Token(object):
 		# using a stupid heuristic: the image / token.name match ratio
 		if img is None:
 			# compute the diff ratio for the given name compared to the token name
-			ratio = lambda name: difflib.SequenceMatcher(None, name.lower(), self.name.lower()).ratio()
+			ratio = lambda name: difflib.SequenceMatcher(None, name.lower(), self.matchImg.lower()).ratio()
 			# morph "/abc/def/anyfile.png" into "anyfile"
 			short_name = lambda full_path: os.path.splitext(os.path.basename(full_path))[0]
 			# list of all img files
@@ -135,6 +139,7 @@ class Token(object):
 			else:
 				self.assets['icon'] = Img(os.path.join('imglib', 'dft.png'))
 		return self.assets.get('icon', None)
+
 	@icon.setter
 	def icon(self, fp): self.assets['icon'] = Img(fp)
 
@@ -154,6 +159,7 @@ class Token(object):
 		self.assets['portrait'] = Img(fp)
 
 class IToken(Token):
+	"""Image token"""
 	def __init__(self, *args, **kwargs):
 		Token.__init__(self, *args, **kwargs)
 		self.snapToGrid = 'false'
@@ -168,6 +174,32 @@ class IToken(Token):
 	def layer(self): return 'BACKGROUND'
 	@property
 	def type(self): return 'NPC'
+
+class Map(IToken): pass
+
+class Character(Token):
+	def __init__(self, *args, **kwargs):
+		Token.__init__(self, *args, **kwargs)
+		self.hasSight = 'true'
+	@classmethod
+	def from_json(cls, dct):
+		_type = dct.get("_type", None)
+		if _type is not None and _type.lower() == "character":
+			ret = cls()
+			for k,v in dct.iteritems(): setattr(ret, k, v)
+			return ret
+		return dct
+
+	def __repr__(self): return 'Char<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
+
+	@property
+	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
+	@property
+	def states(self): return []
+	@property
+	def macros(self): return []
+	@property
+	def layer(self): return 'TOKEN'
 
 class TProp(object):
 	"""Token property"""

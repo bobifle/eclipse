@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+import optparse
 try:
 	import coloredlogs # optional
 except ImportError: pass
 import logging
-import itertools
 
-from token import Token, IToken, TProp
+from token import Map, Character
 from cmpgn import Campaign, CProp
 
 log = logging.getLogger()
@@ -102,55 +102,33 @@ campaign_props='''[
 ]
 '''
 
-class ECampaign(Campaign):
-	"""Eclipse Phase campaign."""
-	def setProps(self, token):
-		Campaign.setProps(self, token)
-		for prop in json.loads(campaign_props):
-			self.props.append(CProp(prop['name'], prop['showOnSheet'], prop['value']))
-
-class Character(Token):
-	"Eclipse Character"
-	def __init__(self, *args, **kwargs):
-		Token.__init__(self, *args, **kwargs)
-		self.hasSight = 'true'
-	@classmethod
-	def from_json(cls, dct):
-		_type = dct.get("_type", None)
-		if _type is not None and _type.lower() == "character":
-			ret = cls()
-			for k,v in dct.iteritems(): setattr(ret, k, v)
-			return ret
-		return dct
-
-	def __repr__(self): return 'Char<%s>' % self.name
-
+class ECharacter(Character):
 	@property
-	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
-	@property
-	def states(self): return []
-	@property
-	def macros(self): return []
-	@property
-	def layer(self): return 'TOKEN'
+	def matchImg(self): return self.morph
 
 if __name__== '__main__':
 	# initialize the colored logs if the module is installed
 	try:
 		coloredlogs.install(fmt='%(name)s %(levelname)8s %(message)s')
 	except NameError: pass
-	logging.basicConfig(level=logging.INFO)
-	chars = [json.loads(tok, object_hook = Character.from_json) for tok in tokens]
+	parser = optparse.OptionParser()
+	parser.add_option('-v', '--verbose', dest='verbose', action='count',
+			help='increase the logging level')
+	(options, args) = parser.parse_args()
+	logging.basicConfig(level=logging.INFO-options.verbose*10)
+	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
 	for index, char in enumerate(chars):
 		# set their icon
-		char.icon = 'imglib/%s.png'%char.morph
+		# char.icon = 'imglib/%s.png'%char.morph
 		# offset characters from 1 grid unit from each other
 		char.x = (index+20)*50
 		char.zipme()
-	cmpgn = ECampaign('dft')
-	cmpgn.setProps(chars[0])
-	main_scene = IToken()
+	cp = Campaign('eclipse')
+	# use the first character properties, and add these as campaign properties as well
+	cp.props.extend([CProp.fromTProp(p) for p in chars[0].props])
+	cp.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(campaign_props)])
+	main_scene = Map()
 	main_scene.name = 'main_scene'
-	cmpgn.tokens.append(main_scene)
-	cmpgn.tokens.extend(chars)
-	cmpgn.zipme()
+	cp.tokens.append(main_scene)
+	cp.tokens.extend(chars)
+	cp.zipme()

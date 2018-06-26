@@ -7,7 +7,7 @@ import logging
 
 from util import jenv
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 class Campaign(object):
 	def __init__(self, name):
@@ -15,13 +15,7 @@ class Campaign(object):
 		self.props = []
 		self.tokens = []
 
-	def __repr__(self): return 'Cmpgn<%s>' % self.name
-
-	def setProps(self, token):
-		"""Set campaign properties using the given token as reference"""
-		self.props = []
-		for prop in token.props:
-			self.props.append(CProp.fromTProp(prop))
+	def __repr__(self): return 'Cmpgn<%s,%s props, %s tokens>' % (self.name, len(self.props), len(self.tokens))
 
 	@property
 	def content_xml(self):
@@ -42,7 +36,7 @@ class Campaign(object):
 			zipme.writestr('properties.xml', self.properties_xml)
 			for token in self.tokens:
 				for name, asset in token.assets.iteritems():
-					zipme.writestr('assets/%s' % asset.md5, 
+					zipme.writestr('assets/%s' % asset.md5,
 							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
