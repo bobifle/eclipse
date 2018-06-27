@@ -3,7 +3,7 @@
 import json
 import optparse
 
-from mtoken import Map, Character
+from mtoken import Map, Character, Morph
 from cmpgn import Campaign, CProp
 from util import lName, getLogger, configureLogger, parse_args
 
@@ -76,12 +76,38 @@ tokens=[
 		{"insight":1},
 		{"moxie":0},
 		{"vigor":4},
-		{"flex": 1},
+		{"flex": 2},
 		{"ego_flex": 1}
 		],
 	"skills": [
 		{"melee":55},
 		{"psi":0}
+		],
+	"notes": ""
+}
+''',
+]
+
+morphs = [
+'''{	"_type" : "Morph",
+	"name": "arachnoid",
+	"category": "synthmorph",
+	"attributes": [
+		{"durability":55},
+		{"wound_th": 11},
+		{"death_rating": 110}
+		],
+	"pools": [
+		{"insight":1},
+		{"moxie":0},
+		{"vigor":4},
+		{"flex": 2}
+		],
+	"movements": [
+		{"hopper":[4,16]},
+		{"thurst_vector":[8,40]},
+		{"walker":[4,24]},
+		{"wheeled":[8,40]}
 		],
 	"notes": ""
 }
@@ -108,8 +134,9 @@ def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
 	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
+	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	cp = Campaign('eclipse')
-	cp.build(chars, campaign_props)
+	cp.build(chars+_morphs, campaign_props)
 	return cp
 
 if __name__== '__main__':

@@ -201,6 +201,24 @@ class Character(Token):
 	@property
 	def layer(self): return 'TOKEN'
 
+class Morph(Character):
+	@classmethod
+	def from_json(cls, dct):
+		ret = cls()
+		for k,v in dct.iteritems():
+			print k, v
+			setattr(ret, k, v)
+		return ret
+	def __repr__(self): return 'Morph<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
+	@property
+	def layer(self): return 'TOKEN'
+	@property
+	def matchImg(self): return self.name
+	@property
+	def type(self): return 'MORPH'
+	@property
+	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.movements)]
+
 class TProp(object):
 	"""Token property"""
 	def __init__(self, name, value):
