@@ -4,7 +4,6 @@ import zipfile
 import os
 import uuid
 import base64
-import logging
 import difflib
 import itertools
 import glob
@@ -46,7 +45,7 @@ class Token(object):
 		}[self.size.lower()]
 
 	def __getattr__(self, attr):
-		for prop in self.props:
+		for prop in object.__getattribute__(self, "props"):
 			if prop.name.lower() == attr.lower(): return prop
 
 	@property
@@ -204,11 +203,13 @@ class Character(Token):
 class Morph(Character):
 	@classmethod
 	def from_json(cls, dct):
-		ret = cls()
-		for k,v in dct.iteritems():
-			print k, v
-			setattr(ret, k, v)
-		return ret
+		_type = dct.get("_type", None)
+		if _type is not None and _type.lower() == "morph":
+			ret = cls()
+			for k,v in dct.iteritems():
+				setattr(ret, k, v)
+			return ret
+		return dct
 	def __repr__(self): return 'Morph<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
 	@property
 	def layer(self): return 'TOKEN'

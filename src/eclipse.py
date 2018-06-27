@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-import optparse
 
-from mtoken import Map, Character, Morph
-from cmpgn import Campaign, CProp
+from mtoken import Character, Morph
+from cmpgn import Campaign
 from util import lName, getLogger, configureLogger, parse_args
 
 log = getLogger(lName)
@@ -137,6 +136,7 @@ def main():
 	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	cp = Campaign('eclipse')
 	cp.build(chars+_morphs, campaign_props)
+	log.warning('Done building %s' % cp)
 	return cp
 
 if __name__== '__main__':

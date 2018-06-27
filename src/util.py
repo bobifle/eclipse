@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import jinja2
 import io
+import os
 import hashlib
 import optparse
 from PIL import Image
@@ -17,18 +18,31 @@ _jenv = None
 lName = 'mtools'
 # the main logger
 mLog = logging.getLogger(lName)
-def getLogger(name): return logging.getLogger(lName+'.'+name)
+def getLogger(name):
+	return logging.getLogger(lName+'.'+name if lName != name else lName)
 # the util sublogger
 log = getLogger(__name__)
 
 def configureLogger(verbose):
 	"""Configure the loggers, do not call twice."""
-	coloredlogs.DEFAULT_FIELD_STYLES['levelname'] = {'color': 'white'}
+	formatter = logging.Formatter('%(name)s : %(levelname)s : %(message)s')
+	# logging to the stream, use the colored version if available
 	try:
-		#coloredlogs.install(level=logging.INFO-verbose*10, fmt='%(name)s %(levelname)8s %(message)s', logger=mLog)
-		coloredlogs.install(level=logging.INFO-verbose*10, fmt='%(name)s %(levelname)8s %(message)s', logger=mLog)
+		coloredlogs.DEFAULT_FIELD_STYLES['levelname'] = {'color': 'white'}
+		coloredlogs.install(level=logging.DEBUG, fmt='%(name)s %(levelname)8s %(message)s', logger=mLog)
+		mLog.handlers[-1].setLevel(logging.WARNING-verbose*10)
 	except NameError:
-		logging.getLogger(lName.setLevel(level=logging.INFO-verbose*10))
+		ch = logging.StreamHandler()
+		ch.setLevel(logging.WARNING-verbose*10)
+		ch.setFormatter(formatter)
+		mLog.addHandler(ch)
+
+	mLog.setLevel(logging.DEBUG) # don't filter anythig let the handlers to the filtering
+	fh = logging.FileHandler(os.path.join('build', mLog.name+'.log'), mode="w") # mode w will erase previous logs
+	fh.setLevel(logging.DEBUG)
+	# create formatter and add it to the handlers
+	fh.setFormatter(formatter)
+	mLog.addHandler(fh)
 
 def parse_args():
 	parser = optparse.OptionParser()
