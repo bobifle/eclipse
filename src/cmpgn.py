@@ -44,8 +44,11 @@ class Campaign(object):
 		with zipfile.ZipFile(os.path.join('build', '%s.cmpgn'%self.name), 'w') as zipme:
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
+			md5s = [] # record added assets
 			for token in self.tokens:
 				for name, asset in token.assets.iteritems():
+					if asset.md5 in md5s: continue # dont zip the same file twice
+					md5s.append(asset.md5)
 					zipme.writestr('assets/%s' % asset.md5,
 							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
