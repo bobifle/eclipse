@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from mtoken import Character, Morph
+from mtoken import Character, Morph, LToken
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
@@ -160,8 +160,10 @@ def main():
 	configureLogger(options.verbose)
 	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
 	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
+	macros = []
+	libs = [LToken('Lib:ep', macros)]
 	zone = Zone('Library')
-	zone.build(chars+_morphs)
+	zone.build(chars+_morphs+libs)
 	# Build the PC property type
 	pc = PSet('PC', [CProp.fromTProp(p) for p in chars[0].props])
 	pc.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)])
@@ -170,7 +172,6 @@ def main():
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
 	cp = Campaign('eclipse')
 	cp.build([zone], [pc, pmorph])
-
 	log.warning('Done building %s' % cp)
 	return cp
 

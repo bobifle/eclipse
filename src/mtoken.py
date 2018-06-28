@@ -240,3 +240,20 @@ class TProp(object):
 	      <outer-class reference="../../../.."/>
 	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
 	  </entry>''').render(prop=self)
+
+class LToken(Token):
+	"""Library Token."""
+	def __init__(self, name, macros):
+		Token.__init__(self)
+		self.name = name
+		self._macros = macros
+		self.icon = 'imglib/ep_logo.png'
+		self.size = 'huge'
+	@property
+	def macros(self): return self._macros
+	@property
+	def layer(self): return 'TOKEN'
+	@property
+	def states(self): return []
+	@property
+	def props(self): return []
