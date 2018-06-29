@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 import zipfile
 import os
-import uuid
-import base64
 import difflib
 import itertools
 import glob
 import jinja2
 
-from util import jenv, Img, getLogger
+from util import jenv, Img, getLogger, guid
 
 log = getLogger(__name__)
 
@@ -60,7 +58,7 @@ class Token(object):
 	@property
 	def guid(self):
 		if self._guid is self.sentinel:
-			self._guid = base64.b64encode(uuid.uuid4().bytes)
+			self._guid = guid()
 		return self._guid
 
 	@property

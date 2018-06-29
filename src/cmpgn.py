@@ -4,9 +4,10 @@ import jinja2
 import zipfile
 import os
 import json
+import itertools
 
-from mtoken import Map
 from util import jenv, getLogger
+from mtoken import Character
 
 log = getLogger(__name__)
 
@@ -14,9 +15,15 @@ class Campaign(object):
 	def __init__(self, name):
 		self.name = name
 		self.props = []
-		self.tokens = []
+		self.zones = []
 
-	def __repr__(self): return 'Cmpgn<%s,%s props, %s tokens>' % (self.name, len(self.props), len(self.tokens))
+	@property
+	def tokens(self): return itertools.chain(*(zone.tokens for zone in self.zones))
+
+	@property
+	def chars(self): return (tok for tok in self.tokens if isinstance(tok, Character) and tok.type == 'PC')
+
+	def __repr__(self): return 'Cmpgn<%s,%s props, %s tokens>' % (self.name, len(self.props), len(list(self.tokens)))
 
 	@property
 	def content_xml(self):
@@ -41,19 +48,12 @@ class Campaign(object):
 							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
-	def build(self, tokens, cprops):
+	def build(self, zones, cprops):
 		"""Build a campaign given the tokens, properties all json data."""
-		for index, tok in enumerate(tokens):
-			# offset tokens from 1 grid unit from each other
-			tok.x = (index+20)*50
-			tok.zipme()
+		self.zones.extend(zones)
 		# use the first character properties, and add these as campaign properties as well
-		self.props.extend([CProp.fromTProp(p) for p in tokens[0].props])
+		self.props.extend([CProp.fromTProp(p) for p in next(self.chars).props])
 		self.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(cprops)])
-		main_scene = Map()
-		main_scene.name = 'main_scene'
-		self.tokens.append(main_scene)
-		self.tokens.extend(tokens)
 		self.zipme()
 
 class CProp(object):

@@ -4,6 +4,7 @@ import json
 
 from mtoken import Character, Morph
 from cmpgn import Campaign
+from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
 
 log = getLogger(lName)
@@ -134,8 +135,10 @@ def main():
 	configureLogger(options.verbose)
 	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
 	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
+	zone = Zone('Library')
+	zone.build(chars+_morphs)
 	cp = Campaign('eclipse')
-	cp.build(chars+_morphs, campaign_props)
+	cp.build([zone], campaign_props)
 	log.warning('Done building %s' % cp)
 	return cp
 

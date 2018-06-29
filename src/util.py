@@ -5,6 +5,8 @@ import io
 import os
 import hashlib
 import optparse
+import base64
+import uuid
 from PIL import Image
 try:
 	import coloredlogs # optional
@@ -75,3 +77,7 @@ class Img(object):
 		img.thumbnail((x,y))
 		img.save(thumb, format='png')
 		return thumb
+
+def guid():
+	"""Return a serialized GUID, it's an uuid4 encoded in base64."""
+	return base64.b64encode(uuid.uuid4().bytes)
