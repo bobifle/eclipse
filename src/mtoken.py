@@ -65,7 +65,7 @@ class Token(object):
 	def type(self): return 'PC'
 
 	@property
-	def prop_type(self): return 'Eclipse'
+	def prop_type(self): return 'PC'
 
 	@property
 	def width(self): return self.icon.x
@@ -214,9 +214,12 @@ class Morph(Character):
 	@property
 	def matchImg(self): return self.name
 	@property
-	def type(self): return 'MORPH'
+	def type(self): return 'Morph'
 	@property
 	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.movements)]
+	@property
+	def prop_type(self): return 'MORPH'
+
 
 class TProp(object):
 	"""Token property"""

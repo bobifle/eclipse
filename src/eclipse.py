@@ -3,7 +3,7 @@
 import json
 
 from mtoken import Character, Morph
-from cmpgn import Campaign
+from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
 
@@ -112,9 +112,34 @@ morphs = [
 	"notes": ""
 }
 ''',
+'''{	"_type" : "Morph",
+	"name": "sylph",
+	"category": "biomorph",
+	"attributes": [
+		{"durability":45},
+		{"wound_th": 8},
+		{"death_rating": 70}
+		],
+	"pools": [
+		{"insight":0},
+		{"moxie":2},
+		{"vigor":1},
+		{"flex": 3}
+		],
+	"movements": [
+		{"walker":[4,24]}
+		],
+	"notes": ""
+}
+''',
 ]
 
-campaign_props='''[
+
+morph_props='''[
+{"name": "pools", "showOnSheet": true, "value": "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"}
+]
+'''
+pc_props='''[
 {"name": "aptitudes", "showOnSheet": true, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
 {"name": "pools", "showOnSheet": true, "value": "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"},
 {"name": "initiative", "showOnSheet": true, "value": "{(reflex + intuition)/5}"},
@@ -137,8 +162,15 @@ def main():
 	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	zone = Zone('Library')
 	zone.build(chars+_morphs)
+	# Build the PC property type
+	pc = PSet('PC', [CProp.fromTProp(p) for p in chars[0].props])
+	pc.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)])
+	# Build the Morph property type
+	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
+	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
 	cp = Campaign('eclipse')
-	cp.build([zone], campaign_props)
+	cp.build([zone], [pc, pmorph])
+
 	log.warning('Done building %s' % cp)
 	return cp
 

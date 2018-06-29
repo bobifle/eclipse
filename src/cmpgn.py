@@ -3,18 +3,20 @@
 import jinja2
 import zipfile
 import os
-import json
 import itertools
+import collections
 
 from util import jenv, getLogger
 from mtoken import Character
 
 log = getLogger(__name__)
 
+PSet = collections.namedtuple('PSet', ['name', 'props'])
+
 class Campaign(object):
 	def __init__(self, name):
 		self.name = name
-		self.props = []
+		self.psets = []
 		self.zones = []
 
 	@property
@@ -23,7 +25,7 @@ class Campaign(object):
 	@property
 	def chars(self): return (tok for tok in self.tokens if isinstance(tok, Character) and tok.type == 'PC')
 
-	def __repr__(self): return 'Cmpgn<%s,%s props, %s tokens>' % (self.name, len(self.props), len(list(self.tokens)))
+	def __repr__(self): return 'Cmpgn<%s,%s prop_sets, %s tokens>' % (self.name, len(self.psets), len(list(self.tokens)))
 
 	@property
 	def content_xml(self):
@@ -48,12 +50,10 @@ class Campaign(object):
 							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
 					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
-	def build(self, zones, cprops):
+	def build(self, zones, psets):
 		"""Build a campaign given the tokens, properties all json data."""
 		self.zones.extend(zones)
-		# use the first character properties, and add these as campaign properties as well
-		self.props.extend([CProp.fromTProp(p) for p in next(self.chars).props])
-		self.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(cprops)])
+		self.psets.extend(psets)
 		self.zipme()
 
 class CProp(object):
@@ -83,3 +83,4 @@ class CProp(object):
               <gmOnly>false</gmOnly>
               <defaultValue>{{prop.defaultValue}}</defaultValue>
             </net.rptools.maptool.model.TokenProperty>''').render(prop=self)
+

@@ -15,14 +15,16 @@
     </zones>
     <campaignProperties>
       <tokenTypeMap>
+{%- for pset in cmpgn.psets %}
         <entry>
-          <string>Eclipse</string>
+          <string>{{pset.name}}</string>
           <list>
-	  {%- for prop in cmpgn.props %}
-	    {{prop.render()}}
-          {%- endfor %}
+{%- for prop in pset.props %}
+			{{prop.render()}}
+{%- endfor %}
           </list>
         </entry>
+{%- endfor %}
       </tokenTypeMap>
       <remoteRepositoryList/>
       <lightSourcesMap class="tree-map">
