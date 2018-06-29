@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+import csv
 
 from mtoken import Character, Morph, LToken
 from cmpgn import Campaign, CProp, PSet
@@ -155,11 +156,37 @@ class ECharacter(Character):
 	@property
 	def matchImg(self): return self.morph
 
+def getMorphs():
+	_morphs= []
+	with open('data/data_morphs.csv', 'r') as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			m = Morph()
+			m.name = row['name']
+			m.notes = row['desc']
+			m.category = row['type']
+			m.attributes = [
+				{'wound_th': int(row['WT'])},
+				{'durability': int(row['Durability'])},
+			]
+			m.pools = []
+			firstEd2Second = lambda attrList: int(sum((int(row[attr]) for attr in attrList))/2.5)
+			m.pools = [
+				{'insight': firstEd2Second(['COG', 'INT'])},
+				{'moxie': firstEd2Second(['SAV', 'WIL'])},
+				{'vigor': firstEd2Second(['REF', 'SOM'])},
+				{'flex': int(row['CP'])/20},
+			]
+			m.movements=[{"walker":[4,24]}]
+			_morphs.append(m)
+	return _morphs
+
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
 	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
-	_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
+	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
+	_morphs = getMorphs()
 	macros = []
 	libs = [LToken('Lib:ep', macros)]
 	zone = Zone('Library')

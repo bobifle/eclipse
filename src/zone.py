@@ -29,10 +29,16 @@ class Zone(object):
 
 	def build(self, tokens):
 		"""Build a campaign given the tokens, properties all json data."""
+		offsets = {"PC": (100,400), "Lib": (100,200), "Morph": (100,600)}
 		for index, tok in enumerate(tokens):
-			# offset tokens from 1 grid unit from each other
-			tok.x = (index+20)*50
+			x,y = offsets[tok.type]
+			line = index/20
+			col = index%20
+			tok.x = x + (col)*50
+			tok.y = y + line*100
 		main_scene = Map()
-		main_scene.name = 'main_scene'
+		main_scene.name = 'empty_pate_blue'
+		main_scene.y = 0
+		main_scene.x=0
 		self.tokens.append(main_scene)
 		self.tokens.extend(tokens)
