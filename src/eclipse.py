@@ -4,6 +4,7 @@ import json
 import csv
 
 from mtoken import Character, Morph, LToken
+from macro import SheetMacro
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
@@ -34,7 +35,7 @@ tokens=[
 		{"melee":0},
 		{"psi":0}
 		],
-	"notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.<p>You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it.</p>"
+	"notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it."
 }
 ''',
 '''{	"_type" : "Character",
@@ -87,6 +88,32 @@ tokens=[
 	"notes": ""
 }
 ''',
+'''{	"_type" : "Character",
+	"name" : "Svafa",
+	"morph": "futura",
+	"attributes": [
+		{"somatics":10},
+		{"reflex": 15},
+		{"savvy": 15},
+		{"intuition": 20},
+		{"cognition": 15},
+		{"willpower" : 20}
+		],
+	"pools": [
+		{"insight":1},
+		{"moxie":0},
+		{"vigor":4},
+		{"flex": 2},
+		{"ego_flex": 1}
+		],
+	"skills": [
+		{"melee":0},
+		{"psi":0}
+		],
+	"notes": ""
+}
+''',
+
 ]
 
 morphs = [
@@ -151,11 +178,6 @@ pc_props='''[
 ]
 '''
 
-class ECharacter(Character):
-	# eclipse characters will use their morph name to try finding the proper portrait in the imglib
-	@property
-	def matchImg(self): return self.morph
-
 def getMorphs():
 	_morphs= []
 	with open('data/data_morphs.csv', 'r') as csvfile:
@@ -184,7 +206,8 @@ def getMorphs():
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
-	chars = [json.loads(tok, object_hook = ECharacter.from_json) for tok in tokens]
+	chars = [json.loads(tok, object_hook = Character.from_json) for tok in tokens]
+	for tok in chars: tok.macros = [SheetMacro(tok)]
 	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	_morphs = getMorphs()
 	macros = []

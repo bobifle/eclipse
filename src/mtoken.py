@@ -20,6 +20,7 @@ class Token(object):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
 		self._guid = self.sentinel
+		self.macros = []
 		self.name = 'defaultName'
 		self.size = 'medium'
 		self.assets = {}
@@ -45,9 +46,6 @@ class Token(object):
 	def __getattr__(self, attr):
 		for prop in object.__getattribute__(self, "props"):
 			if prop.name.lower() == attr.lower(): return prop
-
-	@property
-	def macros(self): raise NotImplementedError
 
 	@property
 	def props(self): raise NotImplementedError
@@ -166,8 +164,6 @@ class IToken(Token):
 	@property
 	def states(self): return []
 	@property
-	def macros(self): return []
-	@property
 	def layer(self): return 'BACKGROUND'
 	@property
 	def type(self): return 'Img'
@@ -193,8 +189,6 @@ class Character(Token):
 	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
 	@property
 	def states(self): return []
-	@property
-	def macros(self): return []
 	@property
 	def layer(self): return 'TOKEN'
 
@@ -246,11 +240,9 @@ class LToken(Token):
 	def __init__(self, name, macros):
 		Token.__init__(self)
 		self.name = name
-		self._macros = macros
+		self.macros = macros
 		self.icon = 'imglib/ep_logo.png'
 		self.size = 'huge'
-	@property
-	def macros(self): return self._macros
 	@property
 	def layer(self): return 'TOKEN'
 	@property

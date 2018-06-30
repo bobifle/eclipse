@@ -1,0 +1,82 @@
+[frame("Token_Sheet"): {
+<html>
+ <head>
+ <link href='https://fonts.googleapis.com/css?family=EB+Garamond|Tangerine' rel='stylesheet'> 
+ [r: "
+ <style>
+ .sblock { background: #FFFFFF; }
+ table.sblock {
+   width: 100%;
+   border: 0px;
+   border-collapse: collapse;
+ }
+ th {background: #0033ff; color: #FFFFFF}
+ th, td {
+  width: 50px;
+  text-align: center;
+ }
+ h1 { font-family: 'Tangerine','EB Garamond', serif;
+      color: #000000;
+      font-weight: 700;
+      margin: 0px;
+      font-size: 24px;
+      letter-spacing: 1px;
+      font-variant: small-caps;
+    }
+ h2 {
+  font-weight: normal;
+  font-style: italic;
+  font-size: 12px;
+  margin: 0;
+ }
+
+ .propline {
+  line-height: 1.4;
+  display: block;
+  text-indent: -1em;
+  padding-left: 1em;
+  }
+
+ h4 {
+  color: #000000;
+  margin: 0;
+  display: inline;
+  font-weight: bold;
+ }
+ p {
+  text-indent: 1em;
+  margin: 0;
+ }
+	.rule { height: 2px; background: #0099ff; position: relative; }
+   </style>"]
+  <title>{ getName()} Details</title>
+ </head>
+ <body>
+ <div class="sblock">
+    <creature-heading>
+    <table>
+	<tbody>
+	<tr>
+	<td><h1>{getName()}<h1></td>
+	<td><img src='[r: getTokenImage(100)]'></img></td>
+	</tr>
+	</tbody>
+	</table>
+    </creature-heading>
+	<div class="rule"></div>
+    <div class="property-line">
+     <h4>Durability</h4>
+     <p>{getProperty("durability")}</p>
+    </div>
+	<div class="rule"></div>
+    <table class="sblock">
+    <tr> {% for attr in macro.cattr %}<th>{{attr[:3].upper()}}</th>{% endfor %} </tr>
+    <tr> {% for attr in macro.cattr %}<td id="{{attr}}">{getProperty("{{attr}}")}</td>{% endfor %}</tr>
+    </table>
+	<div class="rule"></div>
+	{getNotes()}
+	<div class="rule"></div>
+ </div>
+ </body>
+</html>
+}]
