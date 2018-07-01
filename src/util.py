@@ -68,6 +68,9 @@ class Img(object):
 		self.x, self.y = img.size
 		img.save(self.bytes, format='png')
 		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
+
+	def __repr__(self): return "Img<%s,%s>" % (os.path.basename(self.fp), self.md5)
+
 	@property
 	def md5(self): return self._md5
 

@@ -30,6 +30,9 @@ class Token(object):
 		self.x, self.y = 0,0
 		self.notes =''
 
+	def __repr__(self):
+		return "%s<%s>"%(self.__class__.__name__, self.name)
+
 	# XXX system dependant ?
 	@property
 	def size_guid(self):
@@ -243,6 +246,7 @@ class LToken(Token):
 		self.macros = macros
 		self.icon = 'imglib/ep_logo.png'
 		self.size = 'huge'
+		self.images = []
 	@property
 	def layer(self): return 'TOKEN'
 	@property
@@ -251,3 +255,12 @@ class LToken(Token):
 	def props(self): return []
 	@property
 	def type(self): return 'Lib'
+	
+	def addImage(self, name, fp):
+		if not os.path.exists(fp): raise ValueError('image %s does not exists')
+		if name in self.assets: raise ValueError('Asset %s already exists')
+		self.assets[name] = Img(fp)
+
+	def assetId(self, name): 
+		return "asset://%s" % self.assets[name].md5
+

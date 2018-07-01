@@ -1,3 +1,5 @@
+body { background-repeat: no-repeat; }
+
 /* Stat bock styles */
 .statblock { background: #FFFFFF;}
 table.statblock { width: 100%; border: 0px; border-collapse: collapse;}

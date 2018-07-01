@@ -4,7 +4,7 @@
  <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
  <title>{ getName()} Details</title>
  </head>
- <body>
+ <body background='[r: tableImage("Eclipse", 1)]'>
  <div class="statblock"><div class= "csheet">
     <div class="chead"><table><tbody>
 	<tr>

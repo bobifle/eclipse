@@ -339,7 +339,14 @@
           </linked-hash-map>
         </entry>
       </lightSourcesMap>
-      <lookupTableMap/>
+      <lookupTableMap>
+{%- for table in cmpgn.tables %}
+		<entry>
+         <string>{{table.name}}</string>
+{{table.render()}}
+		</entry>
+{%- endfor %}
+      </lookupTableMap>
       <sightTypeMap>
         <entry>
           <string>Lowlight</string>
@@ -666,6 +673,14 @@
     <macroButtonLastIndex>0</macroButtonLastIndex>
   </campaign>
   <assetMap>
+{%- for table in cmpgn.tables %}
+{%- for asset in table.assets %}
+     <entry>
+      <net.rptools.lib.MD5Key reference="../../../campaign/campaignProperties/lookupTableMap/entry/net.rptools.maptool.model.LookupTable/entryList/net.rptools.maptool.model.LookupTable_-LookupEntry[{{loop.index}}]/imageId"/>
+      <null/>
+    </entry>
+{%- endfor %}
+{%- endfor %}
 {%- for token in cmpgn.tokens %}
     <entry>
       <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>

@@ -1,0 +1,22 @@
+<net.rptools.maptool.model.LookupTable>
+		<entryList>
+{%- for entry in table %}
+              <net.rptools.maptool.model.LookupTable_-LookupEntry>
+                <min>{{entry.min}}</min>
+                <max>{{entry.max}}</max>
+                <value>{{entry.value}}</value>
+                <imageId>
+                  <id>{{entry.img.md5}}</id>
+                </imageId>
+              </net.rptools.maptool.model.LookupTable_-LookupEntry>
+{%- endfor %}
+		</entryList>
+		<name>{{table.name}}</name>
+		<defaultRoll>{{table.roll}}</defaultRoll>
+		<tableImage>
+		<id>{{table.img.md5}}</id>
+		</tableImage>
+		<visible>false</visible>
+		<allowLookup>false</allowLookup>
+</net.rptools.maptool.model.LookupTable>
+

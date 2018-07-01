@@ -18,12 +18,18 @@ class Campaign(object):
 		self.name = name
 		self.psets = []
 		self.zones = []
+		self.tables = []
 
 	@property
 	def tokens(self): return itertools.chain(*(zone.tokens for zone in self.zones))
 
 	@property
 	def chars(self): return (tok for tok in self.tokens if isinstance(tok, Character) and tok.type == 'PC')
+
+	@property
+	def assets(self): 
+		for elem in  itertools.chain(self.tokens, self.tables):	
+			for k,v in elem.assets.iteritems(): yield k,v
 
 	def __repr__(self): return 'Cmpgn<%s,%s prop_sets, %s tokens>' % (self.name, len(self.psets), len(list(self.tokens)))
 
@@ -45,18 +51,19 @@ class Campaign(object):
 			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
 			zipme.writestr('properties.xml', self.properties_xml)
 			md5s = [] # record added assets
-			for token in self.tokens:
-				for name, asset in token.assets.iteritems():
-					if asset.md5 in md5s: continue # dont zip the same file twice
-					md5s.append(asset.md5)
-					zipme.writestr('assets/%s' % asset.md5,
-							jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
-					zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
+			for name, asset in self.assets:
+				if asset.md5 in md5s: continue # dont zip the same file twice
+				log.debug("adding asset %s: %s" % (name, asset))
+				md5s.append(asset.md5)
+				zipme.writestr('assets/%s' % asset.md5,
+					jenv().get_template('md5.template').render(name=os.path.splitext(os.path.basename(asset.fp))[0], extension='png', md5=asset.md5))
+				zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
 
-	def build(self, zones, psets):
+	def build(self, zones, psets, tables):
 		"""Build a campaign given the tokens, properties all json data."""
 		self.zones.extend(zones)
 		self.psets.extend(psets)
+		self.tables.extend(tables)
 		self.zipme()
 
 class CProp(object):

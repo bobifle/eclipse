@@ -5,6 +5,7 @@ import csv
 
 from mtoken import Character, Morph, LToken
 from macro import SheetMacro, CssMacro
+from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
@@ -203,6 +204,12 @@ def getMorphs():
 			_morphs.append(m)
 	return _morphs
 
+def eclipseTable():
+	t = Table('Eclipse', 'imglib/ep_logo.png')
+	for i, (name,img) in enumerate([('stub', 'imglib/dft.png'), ('csheet', 'imglib/csheet.png')]):
+		t.append(Entry(i, i, name, img))
+	return t
+
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
@@ -222,7 +229,7 @@ def main():
 	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
 	cp = Campaign('eclipse')
-	cp.build([zone], [pc, pmorph])
+	cp.build([zone], [pc, pmorph], [eclipseTable()])
 	log.warning('Done building %s' % cp)
 	return cp
 
