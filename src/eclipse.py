@@ -4,7 +4,7 @@ import json
 import csv
 
 from mtoken import Character, Morph, LToken
-from macro import SheetMacro, CssMacro
+from macro import SheetMacro, CssMacro, Macro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
@@ -210,6 +210,14 @@ def eclipseTable():
 		t.append(Entry(i, i, name, img))
 	return t
 
+def libMacros(ep):
+	return [
+		CssMacro(ep, 'ep_css', 'css/ep.css', 'css', ('black', 'white')),
+		Macro(ep, "Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
+		Macro(ep, "MainSheet", 'mainSheet.template', 'Sheet', ('white', 'blue')),
+		Macro(ep, "MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
+	]
+
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
@@ -217,11 +225,9 @@ def main():
 	for tok in chars: tok.macros = [SheetMacro(tok)]
 	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	_morphs = getMorphs()
-	macros = []
-	ep = LToken('Lib:ep', macros) ; ep.macros = [CssMacro(ep, 'ep_css', 'css/ep.css')]
-	libs = [ep]
+	ep = LToken('Lib:ep', []); ep.macros = libMacros(ep)
 	zone = Zone('Library')
-	zone.build(chars+_morphs+libs)
+	zone.build(chars+_morphs+[ep])
 	# Build the PC property type
 	pc = PSet('PC', [CProp.fromTProp(p) for p in chars[0].props])
 	pc.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)])

@@ -6,11 +6,13 @@ from util import jenv
 
 class Macro(object):
 
-	def __init__(self, token, label, tmpl):
+	def __init__(self, token, label, tmpl, group, colors):
 		self.tmpl = tmpl
 		self._label = label
 		self.token = token
-		self.colors = ('black', 'white')
+		self.colors = colors
+		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib 
+		self.group = group
 	
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
@@ -22,29 +24,23 @@ class Macro(object):
 	def label(self): return self._label
 
 	@property
-	def group(self): return 'unknown' 
-
-	@property
 	def color(self): return self.colors[1]
 
 	@property
 	def fontColor(self): return self.colors[0]
 
 class CssMacro(Macro):
-	def __init__(self, token, label, fp):
-		Macro.__init__(self, token, label, '')
+	def __init__(self, token, label, fp, group, colors):
+		Macro.__init__(self, token, label, '', group, colors)
 		self.fp = fp
 	@property
 	def command(self):
 		with open(self.fp, 'r') as css:
 			return css.read()
-	@property
-	def group(self): return 'css' 
 
 class SheetMacro(Macro):
 	def __init__(self, token):
-		Macro.__init__(self, token, 'Sheet', 'token_sheet.template')
-		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower']
-		self.colors = ('white', 'blue')
+		Macro.__init__(self, token, 'Sheet', None, 'Sheet', ('white', 'blue'))
 	@property
-	def group(self): return 'Sheet'
+	def command(self): return '[macro("Sheet@Lib:ep"): "page=Main; name=%s"]' % self.token.name
+

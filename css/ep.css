@@ -1,7 +1,6 @@
 body { background-repeat: no-repeat; }
 
 /* Stat bock styles */
-.statblock { background: #FFFFFF;}
 table.statblock { width: 100%; border: 0px; border-collapse: collapse;}
 .statblock th {background: #0033ff; color: #FFFFFF}
 .statblock th, .statblock td { width: 50px; text-align: center;}

@@ -1,10 +1,3 @@
-[frame("Token_Sheet"): {
-<html>
- <head>
- <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
- <title>{ getName()} Details</title>
- </head>
- <body background='[r: tableImage("Eclipse", 1)]'>
  <div class="statblock"><div class= "csheet">
     <div class="chead"><table><tbody>
 	<tr>
@@ -29,6 +22,3 @@
 	<div id="notes">{getNotes()}</div>
 	<div class="rule"></div>
  </div></div>
- </body>
-</html>
-}]

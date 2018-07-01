@@ -1,0 +1,28 @@
+[h: name = getStrProp(macro.args, "name")]
+[frame(name+"Sheet"): {
+[h: pages = "Main,Morph"]
+[h: currentPage = getStrProp(macro.args, "Page")]
+[h,if(currentPage==""): currentPage="Main"]
+<html>
+ <head>
+ <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
+ <title>{ getName()} Details</title>
+ </head>
+ <body background='[r: tableImage("Eclipse", 1)]'>
+<table>
+  <tr>
+    [foreach(page, pages,""), code: {
+      [h,if (page == currentPage): class="currentPage" ; class="page"]
+      [h: callback = "Sheet@"+getMacroLocation()]
+      <td class="[r: class]">
+        [r: macroLink(page, callback, "none", "Page="+page+"; name="+name, "selected")]
+      </td>
+    }]
+  </tr>
+</table>
+ <!-- Call either the main sheet code or the morph code-->
+ [macro(currentPage+"Sheet@this"): ""]
+
+ </body>
+</html>
+}]
