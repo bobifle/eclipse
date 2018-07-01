@@ -673,13 +673,11 @@
     <macroButtonLastIndex>0</macroButtonLastIndex>
   </campaign>
   <assetMap>
-{%- for table in cmpgn.tables %}
-{%- for asset in table.assets %}
+{%- for asset in cmpgn.tableAssets %}
      <entry>
       <net.rptools.lib.MD5Key reference="../../../campaign/campaignProperties/lookupTableMap/entry/net.rptools.maptool.model.LookupTable/entryList/net.rptools.maptool.model.LookupTable_-LookupEntry[{{loop.index}}]/imageId"/>
       <null/>
     </entry>
-{%- endfor %}
 {%- endfor %}
 {%- for token in cmpgn.tokens %}
     <entry>

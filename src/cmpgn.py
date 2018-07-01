@@ -21,6 +21,11 @@ class Campaign(object):
 		self.tables = []
 
 	@property
+	def tableAssets(self):
+		for table in self.tables:
+			for asset in table: yield asset
+
+	@property
 	def tokens(self): return itertools.chain(*(zone.tokens for zone in self.zones))
 
 	@property
