@@ -186,7 +186,7 @@ class Character(Token):
 	def __repr__(self): return 'Char<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
 
 	@property
-	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills)]
+	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills, [{"morph": self.morph}])]
 	@property
 	def states(self): return []
 	@property

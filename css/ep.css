@@ -1,0 +1,21 @@
+/* Stat bock styles */
+.statblock { background: #FFFFFF;}
+table.statblock { width: 100%; border: 0px; border-collapse: collapse;}
+.statblock th {background: #0033ff; color: #FFFFFF}
+.statblock th, .statblock td { width: 50px; text-align: center;}
+
+/* a div rule will place a blue bar, used a a separator*/
+.rule { height: 2px; background: #0099ff; position: relative; }
+
+/* character sheet styles*/
+.csheet h1 { font-family: 'Heliotype LET', serif; color: #000000; font-weight: 700;
+	margin: 0px; font-size: 48px; letter-spacing: 1px;
+}
+.csheet h2 { font-weight: normal; font-style: italic; font-size: 12px; margin: 0;}
+.csheet h4 { color: #000000; margin: 0; display: inline; font-weight: bold; }
+
+.chead table { width: 100%;}
+.chead table td {padding: 0px; margin: 0px;}
+
+/* Character name on the sheet*/
+.cname {font-family: 'Heliotype LET', serif; color: #000000; font-weight: 700; margin: 0px; font-size: 48px; letter-spacing: 1px;}

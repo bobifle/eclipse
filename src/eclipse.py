@@ -4,7 +4,7 @@ import json
 import csv
 
 from mtoken import Character, Morph, LToken
-from macro import SheetMacro
+from macro import SheetMacro, CssMacro
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args
@@ -211,7 +211,8 @@ def main():
 	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	_morphs = getMorphs()
 	macros = []
-	libs = [LToken('Lib:ep', macros)]
+	ep = LToken('Lib:ep', macros) ; ep.macros = [CssMacro(ep, 'ep_css', 'css/ep.css')]
+	libs = [ep]
 	zone = Zone('Library')
 	zone.build(chars+_morphs+libs)
 	# Build the PC property type

@@ -29,7 +29,7 @@ class Zone(object):
 
 	def build(self, tokens):
 		"""Build a campaign given the tokens, properties all json data."""
-		offsets = {"PC": (100,400), "Lib": (100,200), "Morph": (100,600)}
+		offsets = {"PC": (100,400), "Lib": (100,0), "Morph": (100,600)}
 		for index, tok in enumerate(tokens):
 			x,y = offsets[tok.type]
 			line = index/20

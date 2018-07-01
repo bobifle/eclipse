@@ -6,11 +6,11 @@ from util import jenv
 
 class Macro(object):
 
-	def __init__(self, token, action, label, tmpl):
+	def __init__(self, token, label, tmpl):
 		self.tmpl = tmpl
 		self._label = label
 		self.token = token
-		self.action = action
+		self.colors = ('black', 'white')
 	
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
@@ -25,19 +25,26 @@ class Macro(object):
 	def group(self): return 'unknown' 
 
 	@property
-	def color(self): return {'Health' : 'green', 'Action': 'black'}.get(self.group, 'black')
+	def color(self): return self.colors[1]
 
 	@property
-	def fontColor(self): return 'white'
+	def fontColor(self): return self.colors[0]
+
+class CssMacro(Macro):
+	def __init__(self, token, label, fp):
+		Macro.__init__(self, token, label, '')
+		self.fp = fp
+	@property
+	def command(self):
+		with open(self.fp, 'r') as css:
+			return css.read()
+	@property
+	def group(self): return 'css' 
 
 class SheetMacro(Macro):
 	def __init__(self, token):
-		Macro.__init__(self, token, None, 'Sheet', 'token_sheet.template')
+		Macro.__init__(self, token, 'Sheet', 'token_sheet.template')
 		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower']
-
+		self.colors = ('white', 'blue')
 	@property
 	def group(self): return 'Sheet'
-	@property
-	def color(self): return 'blue'
-	@property
-	def fontColor(self): return 'white'
