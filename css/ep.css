@@ -3,7 +3,7 @@ body { background-repeat: no-repeat; }
 /* Stat bock styles */
 table.statblock { width: 100%; border: 0px; border-collapse: collapse;}
 .statblock th {background: #0033ff; color: #FFFFFF}
-.statblock th, .statblock td { width: 50px; text-align: center;}
+.statblock th, .statblock td { width: 50px; text-align: center; font-weight: bold;}
 
 /* a div rule will place a blue bar, used a a separator*/
 .rule { height: 2px; background: #0099ff; position: relative; }

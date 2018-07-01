@@ -1,0 +1,6 @@
+[h: skills = json.fromStrProp(getLibProperty("skills", "Lib:ep"))]
+[h, foreach(skill, json.fields(skills)), CODE: 
+{
+	[r: foo = json.get(skills, skill)]
+}]
+[h: macro.return=json.fields(skills)]

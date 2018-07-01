@@ -1,23 +1,29 @@
  <div class="statblock"><div class= "csheet">
     <div class="chead"><table><tbody>
-	<tr>
-	<td><div class="cname">{getName()}</div></td>
-	<td rowspan="2"><img src='[r: getTokenImage(100)]'></img></td>
-	</tr>
-	<tr>
-	<td>Morph: {morph}</td>
-	</tr>
+	<tr><td><div class="cname">{getName()}</div></td><td rowspan="2"><img src='[r: getTokenImage(100)]'></img></td></tr>
+	<tr> <td>Morph: {morph}</td></tr>
 	</tbody></table></div>
-	<div class="rule"></div>
-    <div class="property-line">
-     <h4>Durability</h4>
-     <p>{getProperty("durability")}</p>
-    </div>
-	<div class="rule"></div>
     <table class="statblock">
     <tr> {% for attr in macro.cattr %}<th>{{attr[:3].upper()}}</th>{% endfor %} </tr>
     <tr> {% for attr in macro.cattr %}<td id="{{attr}}">{getProperty("{{attr}}")}</td>{% endfor %}</tr>
+    <tr> <td/><td/><th colspan="2">Aptitude Checks</th> </tr>
+    <tr> {% for attr in macro.cattr %}<td id="{{attr}}">{getProperty("{{attr}}")*3}</td>{% endfor %}</tr>
     </table>
+	<div class="rule"></div>
+    <table class="statblock">
+    <tr> <th>Initiative</th> <td>{initiative}</td> <th>Lucidity</th><td>{lucidity}</td></tr>
+    <tr> <th>Trauma Th.</th> <td>{trauma}</td> <th>Insanity</th><td>{insanity}</td></tr>
+    </table>
+	<div class="rule"></div>
+	Reputations: TODO
+	<div class="rule"></div>
+	<table>
+	[macro("Skills@this"): ""]
+	[r,foreach(skill, macro.return),CODE:
+	{
+		<tr><th>[r: skill]</th><td>{getProperty(skill)}</td></tr>
+	}]
+	</table>
 	<div class="rule"></div>
 	<div id="notes">{getNotes()}</div>
 	<div class="rule"></div>

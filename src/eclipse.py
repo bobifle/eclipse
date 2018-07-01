@@ -3,7 +3,7 @@
 import json
 import csv
 
-from mtoken import Character, Morph, LToken
+from mtoken import Character, Morph, LToken, TProp
 from macro import SheetMacro, CssMacro, Macro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
@@ -34,6 +34,7 @@ tokens=[
 		],
 	"skills": [
 		{"melee":0},
+		{"persuade":50},
 		{"psi":0}
 		],
 	"notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it."
@@ -216,6 +217,7 @@ def libMacros(ep):
 		Macro(ep, "Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "MainSheet", 'mainSheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
+		Macro(ep, "Skills", 'skills.template', 'Skills', ('white', 'black')),
 	]
 
 def main():
@@ -226,6 +228,7 @@ def main():
 	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	_morphs = getMorphs()
 	ep = LToken('Lib:ep', []); ep.macros = libMacros(ep)
+	ep.props = [TProp('skills', '''deceive=savvy;persuade=savvy;''')]
 	zone = Zone('Library')
 	zone.build(chars+_morphs+[ep])
 	# Build the PC property type
@@ -234,8 +237,10 @@ def main():
 	# Build the Morph property type
 	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
+	plib = PSet('Lib', [])
+	# Build the Lib property type (empty)
 	cp = Campaign('eclipse')
-	cp.build([zone], [pc, pmorph], [eclipseTable()])
+	cp.build([zone], [pc, pmorph, plib], [eclipseTable()])
 	log.warning('Done building %s' % cp)
 	return cp
 

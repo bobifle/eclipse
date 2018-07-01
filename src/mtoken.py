@@ -51,9 +51,6 @@ class Token(object):
 			if prop.name.lower() == attr.lower(): return prop
 
 	@property
-	def props(self): raise NotImplementedError
-
-	@property
 	def states(self): raise NotImplementedError
 
 	@property
@@ -170,6 +167,9 @@ class IToken(Token):
 	def layer(self): return 'BACKGROUND'
 	@property
 	def type(self): return 'Img'
+	@property
+	def prop_type(self): return 'Lib'
+
 
 class Map(IToken): pass
 
@@ -247,12 +247,11 @@ class LToken(Token):
 		self.icon = 'imglib/ep_logo.png'
 		self.size = 'huge'
 		self.images = []
+		self.props = []
 	@property
 	def layer(self): return 'TOKEN'
 	@property
 	def states(self): return []
-	@property
-	def props(self): return []
 	@property
 	def type(self): return 'Lib'
 	
@@ -263,4 +262,8 @@ class LToken(Token):
 
 	def assetId(self, name): 
 		return "asset://%s" % self.assets[name].md5
+
+	@property
+	def prop_type(self): return 'Lib'
+
 
