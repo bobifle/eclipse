@@ -83,6 +83,10 @@ def traits():
 		reader = UnicodeReader(tfile, encoding='cp1252')
 		return list(reader)
 
+def factions():
+	with codecs.open('data/data_factions.csv', 'r') as tfile:
+		reader = UnicodeReader(tfile, encoding='cp1252')
+		return list(reader)
 
 def main():
 	options, args = parse_args()
@@ -97,6 +101,8 @@ def main():
 	# test with traits, add traits as macro
 	for trait in traits():
 		ep.macros.append(LibMacro(trait['name'],'Traits', ('white','red'), trait))
+	for faction in factions():
+		ep.macros.append(LibMacro(faction['name'],'Factions', ('white','blue'), faction))
 	zone = Zone('Library')
 	zone.build(chars+_morphs+[ep])
 	# Build the PC property type
@@ -109,7 +115,7 @@ def main():
 	# Build the Lib property type (empty)
 	cp = Campaign('eclipse')
 	cp.build([zone], [pc, pmorph, plib], [eclipseTable()])
-	log.warning('Done building %s' % cp)
+	log.warning('Done building %s with a total of %s macros' % (cp, len(list(cp.macros))))
 	return cp
 
 if __name__== '__main__':

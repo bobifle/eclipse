@@ -76,12 +76,12 @@ class Token(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('token_content.template').render(token=self)
+		content = jenv().get_template('token_content.template').render(token=self).encode("utf-8")
 		return content or ''
 
 	@property
 	def properties_xml(self):
-		content = jenv().get_template('token_properties.template').render(token=self)
+		content = jenv().get_template('token_properties.template').render(token=self).encode("utf-8")
 		return content or ''
 
 	@property

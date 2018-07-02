@@ -18,7 +18,7 @@ class Macro(object):
 
 	@property
 	def command(self):
-		return jenv().get_template(self.tmpl).render(macro=self)
+		return jenv().get_template(self.tmpl).render(macro=self).encode("utf-8")
 
 	@property
 	def label(self): return self._label

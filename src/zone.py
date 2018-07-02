@@ -22,7 +22,7 @@ class Zone(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('zone_content.template').render(zone=self)
+		content = jenv().get_template('zone_content.template').render(zone=self).encode("utf-8")
 		return content or ''
 
 	def render(self): return self.content_xml

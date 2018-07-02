@@ -26,6 +26,9 @@ class Campaign(object):
 			for asset in table: yield asset
 
 	@property
+	def macros(self): return itertools.chain(*(tok.macros for tok in self.tokens))
+
+	@property
 	def tokens(self): return itertools.chain(*(zone.tokens for zone in self.zones))
 
 	@property
@@ -40,7 +43,7 @@ class Campaign(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('cmpgn_content.template').render(cmpgn=self)
+		content = jenv().get_template('cmpgn_content.template').render(cmpgn=self).encode("utf-8")
 		return content or ''
 
 	@property
