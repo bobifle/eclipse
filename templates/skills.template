@@ -1,6 +1,11 @@
-[h: skills = json.fromStrProp(getLibProperty("skills", "Lib:ep"))]
-[h, foreach(skill, json.fields(skills)), CODE: 
-{
-	[r: foo = json.get(skills, skill)]
+[h,if (macro.args==""): macro.args = json.set("{}", "token", getSelected())]
+[h: tokid=json.get(macro.args,"token")]
+[h: skills = getLibProperty("skills", "Lib:ep")]
+[h: filtered = "[]"]
+[h, foreach(skill, skills), code: {
+	[r: prop = getProperty(json.get(skill, "name"), tokid)]
+	[h, if (prop==""): prop = 0]
+	[h,if(prop > 0 ): filtered=json.append(filtered, skill)]
 }]
-[h: macro.return=json.fields(skills)]
+
+[h: macro.return=filtered]

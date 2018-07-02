@@ -18,10 +18,11 @@
 	Reputations: TODO
 	<div class="rule"></div>
 	<table>
-	[macro("Skills@this"): ""]
+	[macro("Skills@Lib:ep"): ""]
 	[r,foreach(skill, macro.return),CODE:
 	{
-		<tr><th>[r: skill]</th><td>{getProperty(skill)}</td></tr>
+		[h: skillname= json.get(skill, "name")]
+		<tr><th>[r: skillname+" ("+json.get(skill, "apt")+")"]</th><td>{getProperty(skillname)}</td></tr>
 	}]
 	</table>
 	<div class="rule"></div>

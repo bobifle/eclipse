@@ -33,8 +33,11 @@ tokens=[
 		{"ego_flex": 1}
 		],
 	"skills": [
-		{"melee":0},
+		{"deceive":50},
+		{"fray":30},
+		{"free_fall":35},
 		{"persuade":50},
+		{"melee":0},
 		{"psi":0}
 		],
 	"notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it."
@@ -218,7 +221,16 @@ def libMacros(ep):
 		Macro(ep, "MainSheet", 'mainSheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "Skills", 'skills.template', 'Skills', ('white', 'black')),
+		Macro(ep, "onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
 	]
+
+def skills():
+	return json.dumps([dict(name=skill,apt=apt)for skill, apt in [
+		("persuade", "savvy"),
+		("deceive", "savvy"),
+		("fray", "reflex"),
+		("free_fall", "somatics"),
+		]])
 
 def main():
 	options, args = parse_args()
@@ -228,7 +240,7 @@ def main():
 	#_morphs = [json.loads(tok, object_hook = Morph.from_json) for tok in morphs]
 	_morphs = getMorphs()
 	ep = LToken('Lib:ep', []); ep.macros = libMacros(ep)
-	ep.props = [TProp('skills', '''deceive=savvy;persuade=savvy;''')]
+	ep.props = [TProp('skills', skills())]
 	zone = Zone('Library')
 	zone.build(chars+_morphs+[ep])
 	# Build the PC property type
@@ -237,7 +249,7 @@ def main():
 	# Build the Morph property type
 	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
-	plib = PSet('Lib', [])
+	plib = PSet('Lib', [CProp.fromTProp(p) for p in ep.props])
 	# Build the Lib property type (empty)
 	cp = Campaign('eclipse')
 	cp.build([zone], [pc, pmorph, plib], [eclipseTable()])
