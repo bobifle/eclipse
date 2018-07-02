@@ -1,0 +1,7 @@
+[h: data="{}"]
+{%- for k,v in macro.data %}
+[h: data = json.set(data, {{k}}, {{v}})]
+{%- endfor %}
+<!-- without args, show a description, pass any args to silence me ->
+[r,if(macro.args==""): json.get(data, "desc")]
+[h: macro.return=data]

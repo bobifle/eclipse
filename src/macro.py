@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import jinja2
-
+import json
 from util import jenv
 
 class Macro(object):
@@ -13,12 +12,13 @@ class Macro(object):
 		self.colors = colors
 		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib 
 		self.group = group
-	
+
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
 
 	@property
-	def command(self): return jenv().get_template(self.tmpl).render(macro=self)
+	def command(self):
+		return jenv().get_template(self.tmpl).render(macro=self)
 
 	@property
 	def label(self): return self._label
@@ -28,6 +28,13 @@ class Macro(object):
 
 	@property
 	def fontColor(self): return self.colors[0]
+
+class LibMacro(Macro):
+	def __init__(self, label, group, colors, data):
+		Macro.__init__(self, None, label, 'libmacro.template', group, colors)
+		self._data = data
+	@property
+	def data(self): return ((json.dumps(k), json.dumps(v)) for k,v in self._data.iteritems())
 
 class CssMacro(Macro):
 	def __init__(self, token, label, fp, group, colors):

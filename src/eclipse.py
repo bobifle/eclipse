@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 import json
 import csv
+import codecs
 
 from mtoken import Character, Morph, LToken, TProp
-from macro import SheetMacro, CssMacro, Macro
+from macro import SheetMacro, CssMacro, Macro, LibMacro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
-from util import lName, getLogger, configureLogger, parse_args
+from util import lName, getLogger, configureLogger, parse_args, UnicodeReader
 
 log = getLogger(lName)
 
@@ -28,6 +29,7 @@ pc_props='''[
 '''
 
 def getMorphs():
+	"""Fetch morphs from the csvFile"""
 	_morphs= []
 	with open('data/data_morphs.csv', 'r') as csvfile:
 		reader = csv.DictReader(csvfile)
@@ -76,6 +78,12 @@ def skills():
 		("free_fall", "somatics"),
 		]])
 
+def traits():
+	with codecs.open('data/data_traits.csv', 'r') as tfile:
+		reader = UnicodeReader(tfile, encoding='cp1252')
+		return list(reader)
+
+
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
@@ -84,7 +92,11 @@ def main():
 	for tok in chars: tok.macros = [SheetMacro(tok)]
 	_morphs = getMorphs()
 	ep = LToken('Lib:ep', []); ep.macros = libMacros(ep)
-	ep.props = [TProp('skills', skills())]
+	# store skills and traits as properties, they're very big properties...
+	ep.props = [TProp('skills', skills()), TProp('traits', json.dumps(traits()))]
+	# test with traits, add traits as macro
+	for trait in traits():
+		ep.macros.append(LibMacro(trait['name'],'Traits', ('white','red'), trait))
 	zone = Zone('Library')
 	zone.build(chars+_morphs+[ep])
 	# Build the PC property type

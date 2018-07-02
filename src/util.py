@@ -7,6 +7,9 @@ import hashlib
 import optparse
 import base64
 import uuid
+import csv
+import codecs
+import cStringIO
 from PIL import Image
 try:
 	import coloredlogs # optional
@@ -84,3 +87,31 @@ class Img(object):
 def guid():
 	"""Return a serialized GUID, it's an uuid4 encoded in base64."""
 	return base64.b64encode(uuid.uuid4().bytes)
+
+class UTF8Recoder(object):
+	"""
+	Iterator that reads an encoded stream and reencodes the input to UTF-8
+	"""
+	def __init__(self, f, encoding):
+		self.reader = codecs.getreader(encoding)(f)
+
+	def __iter__(self): return self
+
+	def next(self):
+		return self.reader.next().encode("utf-8")
+
+class UnicodeReader(object):
+	"""
+	A CSV reader which will iterate over lines in the CSV file "f",
+	which is encoded in the given encoding.
+	"""
+
+	def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+		f = UTF8Recoder(f, encoding)
+		self.reader = csv.DictReader(f, dialect=dialect, **kwds)
+
+	def next(self):
+		row = self.reader.next()
+		return {unicode(k, "utf-8"):unicode(v, "utf-8") for k,v in row.iteritems()}
+
+	def __iter__(self): return self
