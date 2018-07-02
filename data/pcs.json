@@ -22,6 +22,7 @@
 		{"fray":30},
 		{"free_fall":35},
 		{"persuade":50},
+		{"interface":10},
 		{"melee":0},
 		{"psi":0}
 		],

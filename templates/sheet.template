@@ -1,8 +1,8 @@
 [h: name = getStrProp(macro.args, "name")]
 [frame(name+"Sheet"): {
-[h: pages = "Main,Morph"]
+[h: pages = "Ego,Morph"]
 [h: currentPage = getStrProp(macro.args, "Page")]
-[h,if(currentPage==""): currentPage="Main"]
+[h,if(currentPage==""): currentPage="Ego"]
 <html>
  <head>
  <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">

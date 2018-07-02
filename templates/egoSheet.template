@@ -17,12 +17,25 @@
 	<div class="rule"></div>
 	Reputations: TODO
 	<div class="rule"></div>
-	<table>
+	<table class="statblock">
 	[macro("Skills@Lib:ep"): ""]
-	[r,foreach(skill, macro.return),CODE:
-	{
-		[h: skillname= json.get(skill, "name")]
-		<tr><th>[r: skillname+" ("+json.get(skill, "apt")+")"]</th><td>{getProperty(skillname)}</td></tr>
+	[h: skills = macro.return]
+	[h: index = 0]
+	[h: skillQty = json.length(macro.return)]
+	<tr><td/><td colspan="2">Skills</th><td/></tr>
+	<!-- iterate over skills, 2 by 2, to display 2 skills per row-->
+	[r,while (index < skillQty, ""), code: {
+		<tr> <!--begining of the row -->
+		[h: skill = json.get(skills, index)] [h: skillName = json.get(skill, "name")] [h: skillApt = json.get(skill, "apt" )]
+		<th>[r: skillName]([r: upper(substring(skillApt,0,3))])</th><td>[r: getProperty(skillName)]</td>
+		[h: index = index+1]
+		<!-- display a second skill on the row, if there is any-->
+		[r,if (index < skillQty), code: {
+		[h: skill = json.get(skills, index)] [h: skillName = json.get(skill, "name")] [h: skillApt = json.get(skill, "apt" )]
+		<th>[r: skillName]([r: upper(substring(skillApt,0,3))])</th><td>[r: getProperty(skillName)]</td>
+		[h: index = index+1]
+		}]
+		</tr> <!-- end of the row -->
 	}]
 	</table>
 	<div class="rule"></div>

@@ -2,6 +2,23 @@
 {%- for k,v in macro.data %}
 [h: data = json.set(data, {{k}}, {{v}})]
 {%- endfor %}
-<!-- without args, show a description, pass any args to silence me ->
-[r,if(macro.args==""): json.get(data, "desc")]
+<!-- without args, show a description, pass any args to silence me -->
+[r,if(macro.args==""), code:
+{
+  [r,frame("Info"): {
+  <html>
+  <head>
+  <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
+  <title>[r:json.get(data, "cat")]</title>
+  </head>
+  <body background="[r: tableImage("Eclipse", 1)]">
+  <div class=""><div class="statblock">
+  <div class="cname">[r: json.get(data, "name")] - [r:json.get(data,"cat")]</div>
+  <div class="rule"></div>
+  [r: json.get(data, "desc")]
+  </div></div>
+  </body>
+  </html>
+  }]
+}]
 [h: macro.return=data]

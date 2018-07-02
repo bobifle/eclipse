@@ -49,5 +49,5 @@ class SheetMacro(Macro):
 	def __init__(self, token):
 		Macro.__init__(self, token, 'Sheet', None, 'Sheet', ('white', 'blue'))
 	@property
-	def command(self): return '[macro("Sheet@Lib:ep"): "page=Main; name=%s"]' % self.token.name
+	def command(self): return '[macro("Sheet@Lib:ep"): "page=Ego; name=%s"]' % self.token.name
 

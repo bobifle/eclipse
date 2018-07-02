@@ -64,7 +64,7 @@ def libMacros(ep):
 	return [
 		CssMacro(ep, 'ep_css', 'css/ep.css', 'css', ('black', 'white')),
 		Macro(ep, "Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
-		Macro(ep, "MainSheet", 'mainSheet.template', 'Sheet', ('white', 'blue')),
+		Macro(ep, "EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
 		Macro(ep, "Skills", 'skills.template', 'Skills', ('white', 'black')),
 		Macro(ep, "onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
@@ -76,6 +76,7 @@ def skills():
 		("deceive", "savvy"),
 		("fray", "reflex"),
 		("free_fall", "somatics"),
+		("interface", "cognition"),
 		]])
 
 def traits():
