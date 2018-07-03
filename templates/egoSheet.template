@@ -34,6 +34,8 @@
 		[h: skill = json.get(skills, index)] [h: skillName = json.get(skill, "name")] [h: skillApt = json.get(skill, "apt" )]
 		<th>[r: skillName]([r: upper(substring(skillApt,0,3))])</th><td>[r: getProperty(skillName)]</td>
 		[h: index = index+1]
+		};{ <!-- else -->
+		<td/></td>
 		}]
 		</tr> <!-- end of the row -->
 	}]
