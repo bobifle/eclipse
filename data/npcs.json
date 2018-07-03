@@ -1,0 +1,260 @@
+{
+    "_type": "NPC", 
+    "name": "JOSEF BVES", 
+    "concept": "Conspiracy Leader", 
+    "attributes": {
+        "cognitition": 20, 
+        "intuiation": 15, 
+        "reflex": 15, 
+        "savvy": 15, 
+        "somatics": 15, 
+        "willpower": 20, 
+        "initiative": 6, 
+        "durability": 35, 
+        "wound_th": 7, 
+        "DR": 53, 
+        "TP": 6
+    }, 
+    "energy": 5, 
+    "kinetic": 4, 
+    "morph": "bouncer", 
+    "skills": {
+        "Deceive": 50, 
+        "Fray": 40, 
+        "Free Fall": 65, 
+        "Guns": 60, 
+        "Hardware: Industrial": 50, 
+        "Infiltrate": 40, 
+        "Interface": 60, 
+        "Kinesics": 40, 
+        "Medicine: Psychosurgery": 60, 
+        "Melee": 50, 
+        "Perceive": 60, 
+        "Persuade": 50, 
+        "Provoke": 60, 
+        "Know: Fa Jing Projects": 40, 
+        "Know: TITAN Artifacts": 30
+    }, 
+    "ware": [
+        "Biomods", 
+        "Cold Tolerance", 
+        "Cortical Stack", 
+        "Grip Pads", 
+        "Mesh Inserts", 
+        "Oxygen Reserve", 
+        "Prehensile Feet"
+    ], 
+    "weapons": [
+        "Medium Pistol (DV 2d10, SA/BF/FA)"
+    ]
+}
+{
+    "_type": "NPC", 
+    "name": "LUKE BEST", 
+    "concept": "Confessor Hacker", 
+    "attributes": {
+        "cognitition": 20, 
+        "intuiation": 10, 
+        "reflex": 10, 
+        "savvy": 15, 
+        "somatics": 10, 
+        "willpower": 20, 
+        "initiative": 4, 
+        "durability": 0, 
+        "wound_th": 0, 
+        "DR": 0, 
+        "TP": 4
+    }, 
+    "energy": 0, 
+    "kinetic": 0, 
+    "morph": "agent infomorph", 
+    "skills": {
+        "Free Fall": 40, 
+        "Hardware: Electronics": 40, 
+        "Interface": 70, 
+        "Infosec": 70, 
+        "Perceive": 50, 
+        "Program": 45, 
+        "Research": 60
+    }, 
+    "ware": [], 
+    "weapons": []
+}
+{
+    "_type": "NPC", 
+    "name": "DR. JU GUO", 
+    "concept": "Fa Jing Branch Manager", 
+    "attributes": {
+        "cognitition": 20, 
+        "intuiation": 15, 
+        "reflex": 15, 
+        "savvy": 20, 
+        "somatics": 10, 
+        "willpower": 15, 
+        "initiative": 6, 
+        "durability": 35, 
+        "wound_th": 7, 
+        "DR": 53, 
+        "TP": 6
+    }, 
+    "energy": 0, 
+    "kinetic": 0, 
+    "morph": "menton pod", 
+    "skills": {
+        "Deceive": 40, 
+        "Fray": 25, 
+        "Free Fall": 40, 
+        "Interface": 60, 
+        "Kinesics": 50, 
+        "Perceive": 60, 
+        "Persuade": 60, 
+        "Provoke": 50, 
+        "Know: Fa Jing Projects": 55
+    }, 
+    "ware": [
+        "Biomods", 
+        "Cortical Stack", 
+        "Mesh Inserts", 
+        "Mnemonics"
+    ], 
+    "weapons": []
+}
+{
+    "_type": "NPC", 
+    "name": "CHANG'E JADE", 
+    "concept": "Gossip Blogger", 
+    "attributes": {
+        "cognitition": 15, 
+        "intuiation": 15, 
+        "reflex": 15, 
+        "savvy": 20, 
+        "somatics": 15, 
+        "willpower": 15, 
+        "initiative": 6, 
+        "durability": 25, 
+        "wound_th": 5, 
+        "DR": 50, 
+        "TP": 3
+    }, 
+    "energy": 6, 
+    "kinetic": 4, 
+    "morph": "dragonfly", 
+    "skills": {
+        "Athletics": 50, 
+        "Deceive": 40, 
+        "Fray": 45, 
+        "Free Fall": 50, 
+        "Infiltrate": 40, 
+        "Interface": 60, 
+        "Kinesics": 55, 
+        "Perceive": 60, 
+        "Persuade": 50, 
+        "Know: History": 60, 
+        "Know: Mining Ops": 45, 
+        "Know: Mysteries": 60
+    }, 
+    "ware": [
+        "Access Jacks", 
+        "Cortical Stack", 
+        "Cyberbrain", 
+        "Mesh Inserts", 
+        "Mnemonics", 
+        "Puppet Sock", 
+        "Prehensile Tail", 
+        "Wings"
+    ], 
+    "weapons": []
+}
+{
+    "_type": "NPC", 
+    "name": "CONSTABLE YU", 
+    "concept": "Fa Jing Security Officer", 
+    "attributes": {
+        "cognitition": 15, 
+        "intuiation": 15, 
+        "reflex": 15, 
+        "savvy": 15, 
+        "somatics": 15, 
+        "willpower": 15, 
+        "initiative": 6, 
+        "durability": 35, 
+        "wound_th": 7, 
+        "DR": 53, 
+        "TP": 4
+    }, 
+    "energy": 6, 
+    "kinetic": 13, 
+    "morph": "security pod", 
+    "skills": {
+        "Fray": 50, 
+        "Free Fall": 50, 
+        "Guns": 45, 
+        "Interface": 40, 
+        "Kinesics": 50, 
+        "Medicine: Paramedic": 50, 
+        "Melee": 50, 
+        "Perceive": 50, 
+        "Persuade": 40
+    }, 
+    "ware": [
+        "Access Jacks", 
+        "Biomods", 
+        "Bioweave Armor", 
+        "Claws (DV 2d6)", 
+        "Cortical Stack", 
+        "Cyberbrain", 
+        "Eelware", 
+        "Enhanced Vision", 
+        "Mesh Inserts", 
+        "Mnemonics", 
+        "Puppet Sock"
+    ], 
+    "weapons": [
+        "Medium Pistol (DV 2d10, SA/BF/FA)"
+    ]
+}
+{
+    "_type": "NPC", 
+    "name": "THUGS", 
+    "concept": "Thug", 
+    "attributes": {
+        "cognitition": 15, 
+        "intuiation": 15, 
+        "reflex": 15, 
+        "savvy": 15, 
+        "somatics": 15, 
+        "willpower": 15, 
+        "initiative": 6, 
+        "durability": 35, 
+        "wound_th": 7, 
+        "DR": 53, 
+        "TP": 2
+    }, 
+    "energy": 4, 
+    "kinetic": 10, 
+    "morph": "bouncer", 
+    "skills": {
+        "Athletics": 50, 
+        "Fray": 40, 
+        "Free Fall": 50, 
+        "Guns": 40, 
+        "Hardware: Demolitions": 50, 
+        "Infiltrate": 30, 
+        "Interface": 40, 
+        "Kinesics": 30, 
+        "Melee": 40, 
+        "Perceive": 40
+    }, 
+    "ware": [
+        "Biomods", 
+        "Cold Tolerance", 
+        "Cortical Stack", 
+        "Grip Pads", 
+        "Mesh Inserts", 
+        "Oxygen Reserve", 
+        "Prehensile Feet"
+    ], 
+    "weapons": [
+        "Assault rifle (DV 2d10 + 2, SA/BF/FA)"
+    ]
+}
