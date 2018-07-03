@@ -4,7 +4,7 @@ import json
 import csv
 
 from mtoken import Character, Morph, LToken
-from macro import SheetMacro, CssMacro, Macro, LibMacro
+from macro import CssMacro, TMacro, LibMacro, SMacro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
@@ -75,19 +75,21 @@ def factions(): return fromCsv('data/data_factions.csv')
 def pcs():
 	with open('data/pcs.json', 'r') as jfile:
 		pcs = json.load(jfile, object_hook = Character.from_json)
-	# assign to each player character the sheet macro
-	for tok in pcs: tok.macros = [SheetMacro()]
+	# assign to each player character their macro
+	for tok in pcs:
+		tok.macros.append(SMacro("Sheet", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Resleeve", '[macro("Resleeve@Lib:ep"): ""]', 'Sheet', ('white', 'blue')))
 	return pcs
 
 def libMacros():
 	macros = []
 	macros.extend([
 		CssMacro('ep_css', 'css/ep.css', 'css', ('black', 'white')),
-		Macro("Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
-		Macro("EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
-		Macro("MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
-		Macro("Skills", 'skills.template', 'Skills', ('white', 'black')),
-		Macro("onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
+		TMacro("Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
+		TMacro("EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
+		TMacro("MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
+		TMacro("Skills", 'skills.template', 'Skills', ('white', 'black')),
+		TMacro("onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
 	])
 	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
 	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
@@ -95,9 +97,7 @@ def libMacros():
 
 # build the list of lib tokens
 def libTokens():
-	ep = LToken('Lib:ep', libMacros());
-	return [ep]
-
+	return [LToken('Lib:ep', libMacros())]
 
 def main():
 	options, args = parse_args()

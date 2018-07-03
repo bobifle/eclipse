@@ -16,10 +16,6 @@ class Macro(object):
 	def __repr__(self): return str(self)
 
 	@property
-	def command(self):
-		return jenv().get_template(self.tmpl).render(macro=self).encode("utf-8")
-
-	@property
 	def label(self): return self._label
 
 	@property
@@ -28,9 +24,21 @@ class Macro(object):
 	@property
 	def fontColor(self): return self.colors[0]
 
-class LibMacro(Macro):
+class TMacro(Macro):
+	"""Template Macro"""
+	@property
+	def command(self):
+		return jenv().get_template(self.tmpl).render(macro=self).encode("utf-8")
+
+class SMacro(Macro):
+	"""Template Macro"""
+	@property
+	def command(self):
+		return jenv().Template(self.tmpl).render(macro=self).encode("utf-8")
+
+class LibMacro(TMacro):
 	def __init__(self, label, group, colors, data):
-		Macro.__init__(self, label, 'libmacro.template', group, colors)
+		TMacro.__init__(self, label, 'libmacro.template', group, colors)
 		self._data = data
 	@property
 	def data(self): return ((json.dumps(k), json.dumps(v)) for k,v in self._data.iteritems())
@@ -43,10 +51,4 @@ class CssMacro(Macro):
 	def command(self):
 		with open(self.fp, 'r') as css:
 			return css.read()
-
-class SheetMacro(Macro):
-	def __init__(self):
-		Macro.__init__(self, 'Sheet', None, 'Sheet', ('white', 'blue'))
-	@property
-	def command(self): return '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]'
 
