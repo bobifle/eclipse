@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 import json
 import csv
-import codecs
 
-from mtoken import Character, Morph, LToken, TProp
+from mtoken import Character, Morph, LToken
 from macro import SheetMacro, CssMacro, Macro, LibMacro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
-from util import lName, getLogger, configureLogger, parse_args, UnicodeReader
+from util import lName, getLogger, configureLogger, parse_args, fromCsv
 
 log = getLogger(lName)
 
@@ -60,16 +59,6 @@ def eclipseTable():
 		t.append(Entry(i, i, name, img))
 	return t
 
-def libMacros(ep):
-	return [
-		CssMacro(ep, 'ep_css', 'css/ep.css', 'css', ('black', 'white')),
-		Macro(ep, "Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
-		Macro(ep, "EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
-		Macro(ep, "MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
-		Macro(ep, "Skills", 'skills.template', 'Skills', ('white', 'black')),
-		Macro(ep, "onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
-	]
-
 def skills():
 	return json.dumps([dict(name=skill,apt=apt)for skill, apt in [
 		("persuade", "savvy"),
@@ -79,40 +68,50 @@ def skills():
 		("interface", "cognition"),
 		]])
 
-def traits():
-	with codecs.open('data/data_traits.csv', 'r') as tfile:
-		reader = UnicodeReader(tfile, encoding='cp1252')
-		return list(reader)
+def traits(): return fromCsv('data/data_traits.csv')
 
-def factions():
-	with codecs.open('data/data_factions.csv', 'r') as tfile:
-		reader = UnicodeReader(tfile, encoding='cp1252')
-		return list(reader)
+def factions(): return fromCsv('data/data_factions.csv')
+
+def pcs():
+	with open('data/pcs.json', 'r') as jfile:
+		pcs = json.load(jfile, object_hook = Character.from_json)
+	# assign to each player character the sheet macro
+	for tok in pcs: tok.macros = [SheetMacro()]
+	return pcs
+
+def libMacros():
+	macros = []
+	macros.extend([
+		CssMacro('ep_css', 'css/ep.css', 'css', ('black', 'white')),
+		Macro("Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
+		Macro("EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
+		Macro("MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
+		Macro("Skills", 'skills.template', 'Skills', ('white', 'black')),
+		Macro("onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
+	])
+	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
+	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
+	return macros
+
+# build the list of lib tokens
+def libTokens():
+	ep = LToken('Lib:ep', libMacros());
+	return [ep]
+
 
 def main():
 	options, args = parse_args()
 	configureLogger(options.verbose)
-	with open('data/pcs.json', 'r') as jfile:
-		chars = json.load(jfile, object_hook = Character.from_json)
-	for tok in chars: tok.macros = [SheetMacro(tok)]
 	_morphs = getMorphs()
-	ep = LToken('Lib:ep', []); ep.macros = libMacros(ep)
-	# store skills and traits as properties, they're very big properties...
-	ep.props = [TProp('skills', skills()), TProp('traits', json.dumps(traits()))]
-	# test with traits, add traits as macro
-	for trait in traits():
-		ep.macros.append(LibMacro(trait['name'],'Traits', ('white','red'), trait))
-	for faction in factions():
-		ep.macros.append(LibMacro(faction['name'],'Factions', ('white','blue'), faction))
 	zone = Zone('Library')
-	zone.build(chars+_morphs+[ep])
+	zone.build(pcs()+_morphs+libTokens())
 	# Build the PC property type
-	pc = PSet('PC', [CProp.fromTProp(p) for p in chars[0].props])
+	pc = PSet('PC', [CProp.fromTProp(p) for p in pcs()[0].props]) # XXX rebuilding pcs just for the first element :-/
 	pc.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)])
 	# Build the Morph property type
 	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
-	plib = PSet('Lib', [CProp.fromTProp(p) for p in ep.props])
+	plib = PSet('Lib', [])
 	# Build the Lib property type (empty)
 	cp = Campaign('eclipse')
 	cp.build([zone], [pc, pmorph, plib], [eclipseTable()])

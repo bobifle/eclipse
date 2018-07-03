@@ -9,7 +9,6 @@ import base64
 import uuid
 import csv
 import codecs
-import cStringIO
 from PIL import Image
 try:
 	import coloredlogs # optional
@@ -115,3 +114,12 @@ class UnicodeReader(object):
 		return {unicode(k, "utf-8"):unicode(v, "utf-8") for k,v in row.iteritems()}
 
 	def __iter__(self): return self
+
+
+def fromCsv(fp):
+	"""Return a python array containing the csv content, see DictReader."""
+	with codecs.open(fp, 'r') as csvfile:
+		# these csv use the windows encoding cp1252
+		reader = UnicodeReader(csvfile, encoding='cp1252')
+		# data is now unicode
+		return list(reader)

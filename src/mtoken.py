@@ -254,13 +254,13 @@ class LToken(Token):
 	def states(self): return []
 	@property
 	def type(self): return 'Lib'
-	
+
 	def addImage(self, name, fp):
 		if not os.path.exists(fp): raise ValueError('image %s does not exists')
 		if name in self.assets: raise ValueError('Asset %s already exists')
 		self.assets[name] = Img(fp)
 
-	def assetId(self, name): 
+	def assetId(self, name):
 		return "asset://%s" % self.assets[name].md5
 
 	@property

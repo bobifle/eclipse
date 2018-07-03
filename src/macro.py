@@ -5,12 +5,11 @@ from util import jenv
 
 class Macro(object):
 
-	def __init__(self, token, label, tmpl, group, colors):
+	def __init__(self, label, tmpl, group, colors):
 		self.tmpl = tmpl
 		self._label = label
-		self.token = token
 		self.colors = colors
-		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib 
+		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib
 		self.group = group
 
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
@@ -31,14 +30,14 @@ class Macro(object):
 
 class LibMacro(Macro):
 	def __init__(self, label, group, colors, data):
-		Macro.__init__(self, None, label, 'libmacro.template', group, colors)
+		Macro.__init__(self, label, 'libmacro.template', group, colors)
 		self._data = data
 	@property
 	def data(self): return ((json.dumps(k), json.dumps(v)) for k,v in self._data.iteritems())
 
 class CssMacro(Macro):
-	def __init__(self, token, label, fp, group, colors):
-		Macro.__init__(self, token, label, '', group, colors)
+	def __init__(self, label, fp, group, colors):
+		Macro.__init__(self, label, '', group, colors)
 		self.fp = fp
 	@property
 	def command(self):
@@ -46,8 +45,8 @@ class CssMacro(Macro):
 			return css.read()
 
 class SheetMacro(Macro):
-	def __init__(self, token):
-		Macro.__init__(self, token, 'Sheet', None, 'Sheet', ('white', 'blue'))
+	def __init__(self):
+		Macro.__init__(self, 'Sheet', None, 'Sheet', ('white', 'blue'))
 	@property
-	def command(self): return '[macro("Sheet@Lib:ep"): "page=Ego; name=%s"]' % self.token.name
+	def command(self): return '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]'
 
