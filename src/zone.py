@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from src.mtoken import Map
-from src.util import jenv, getLogger, guid
+from mtoken import Map
+from util import jenv, getLogger, guid
 
 log = getLogger(__name__)
 

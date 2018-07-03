@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-from src.util import jenv
+import jinja2
+from util import jenv
 
 class Macro(object):
 
@@ -34,7 +35,8 @@ class SMacro(Macro):
 	"""Template Macro"""
 	@property
 	def command(self):
-		return jenv().Template(self.tmpl).render(macro=self).encode("utf-8")
+		#XXX no env available !
+		return jinja2.Template(self.tmpl).render(macro=self).encode("utf-8")
 
 class LibMacro(TMacro):
 	def __init__(self, label, group, colors, data):

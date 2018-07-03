@@ -1,0 +1,19 @@
+[h: data = macro.args]
+[r,frame("Info"): {
+  <html>
+  <head>
+  <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
+  <title>[r:json.get(data, "cat")]</title>
+  </head>
+  <body background="[r: tableImage("Eclipse", 1)]">
+  <div class=""><div class="statblock">
+  <div class="cname">[r: json.get(data, "name")] - [r:json.get(data,"cat")]</div>
+  [h: summary=json.get(data, "sum")]
+  [h: desc=json.get(data, "desc")]
+  [r, if(summary!=""), code: {<div class="rule"></div> [r: summary]};{}]
+  [r, if(desc!=""), code: {<div class="rule"></div> [r: desc]};{}]
+  </div></div>
+  </body>
+  </html>
+}]
+[macro.return=""]

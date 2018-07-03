@@ -3,12 +3,12 @@
 import json
 import csv
 
-from src.mtoken import Character, Morph, LToken
-from src.macro import CssMacro, TMacro, LibMacro, SMacro
-from src.mtable import Table, Entry
-from src.cmpgn import Campaign, CProp, PSet
-from src.zone import Zone
-from src.util import lName, getLogger, configureLogger, parse_args, fromCsv
+from mtoken import Character, Morph, LToken
+from macro import CssMacro, TMacro, LibMacro, SMacro
+from mtable import Table, Entry
+from cmpgn import Campaign, CProp, PSet
+from zone import Zone
+from util import lName, getLogger, configureLogger, parse_args, fromCsv
 
 log = getLogger(lName)
 
@@ -91,6 +91,7 @@ def libMacros():
 		TMacro("EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
 		TMacro("MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
 		TMacro("Skills", 'skills.template', 'func', ('white', 'black')),
+		TMacro("LibInfo", 'libInfo.template', 'func', ('white', 'black')),
 		TMacro("Morphs", 'morphs.template', 'func', ('white', 'black')),
 		TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black')),
 	])
@@ -101,17 +102,27 @@ def libMacros():
 
 # build the list of lib tokens
 def libTokens():
-	libs = [LToken('Lib:ep', libMacros())]
+	libs = [LToken('Lib:ep', libMacros(), 'imglib/ep_logo.png')]
 	# the gear lib
 	emacros = []
 	for (group, fp ,colors) in [
 			('Gear', 'data/data_gear.csv', ('white', 'green')),
-			('Armors', 'data/data_armor.csv', ('white', 'blue')),
+			]:
+		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	libs.append(LToken('Lib:gear', emacros, 'imglib/icons/backpack.png'))
+	emacros = []
+	for (group, fp ,colors) in [
 			('Melee Weapons', 'data/data_melee_weapons.csv', ('white', 'red')),
 			('Ranged Weapons', 'data/data_ranged_weapons.csv', ('white', 'red')),
 			]:
 		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
-	libs.append(LToken('Lib:eqt', emacros))
+	libs.append(LToken('Lib:weap', emacros, 'imglib/icons/ammo-box.png'))
+	emacros = []
+	for (group, fp ,colors) in [
+			('Armors', 'data/data_armor.csv', ('white', 'blue')),
+			]:
+		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	libs.append(LToken('Lib:weap', emacros, 'imglib/icons/space-suit.png'))
 	return libs
 
 def main():

@@ -59,6 +59,7 @@ def jenv():
 	global _jenv
 	if _jenv is None:
 		_jenv = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
+		_jenv.filters['json2mt'] = lambda s: s.replace(r"\"", r"\'")
 	return _jenv
 
 class Img(object):

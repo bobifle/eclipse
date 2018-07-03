@@ -6,8 +6,8 @@ import os
 import itertools
 import collections
 
-from src.util import jenv, getLogger
-from src.mtoken import Character
+from util import jenv, getLogger
+from mtoken import Character
 
 log = getLogger(__name__)
 

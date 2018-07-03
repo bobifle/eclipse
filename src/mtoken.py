@@ -7,7 +7,7 @@ import itertools
 import glob
 import jinja2
 
-from src.util import jenv, Img, getLogger, guid
+from util import jenv, Img, getLogger, guid
 
 log = getLogger(__name__)
 
@@ -240,11 +240,11 @@ class TProp(object):
 
 class LToken(Token):
 	"""Library Token."""
-	def __init__(self, name, macros):
+	def __init__(self, name, macros, icon):
 		Token.__init__(self)
 		self.name = name
 		self.macros = macros
-		self.icon = 'imglib/ep_logo.png'
+		self.icon = icon
 		self.size = 'huge'
 		self.images = []
 		self.props = []
