@@ -50,6 +50,8 @@ def getMorphs():
 				{'flex': int(row['CP'])/20},
 			]
 			m.movements=[{"walker":[4,24]}]
+			# attach a sleeve macro
+			m.macros.append(TMacro("Sleeve", 'msleeve.template', 'Sleeve', ('white', 'blue')))
 			_morphs.append(m)
 	return _morphs
 
