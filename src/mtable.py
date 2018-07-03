@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from collections import MutableSequence
 
-from util import jenv, Img, getLogger
+from src.util import jenv, Img, getLogger
 
 log = getLogger(__name__)
 

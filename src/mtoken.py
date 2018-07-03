@@ -7,7 +7,7 @@ import itertools
 import glob
 import jinja2
 
-from util import jenv, Img, getLogger, guid
+from src.util import jenv, Img, getLogger, guid
 
 log = getLogger(__name__)
 

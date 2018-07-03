@@ -3,12 +3,12 @@
 import json
 import csv
 
-from mtoken import Character, Morph, LToken
-from macro import CssMacro, TMacro, LibMacro, SMacro
-from mtable import Table, Entry
-from cmpgn import Campaign, CProp, PSet
-from zone import Zone
-from util import lName, getLogger, configureLogger, parse_args, fromCsv
+from src.mtoken import Character, Morph, LToken
+from src.macro import CssMacro, TMacro, LibMacro, SMacro
+from src.mtable import Table, Entry
+from src.cmpgn import Campaign, CProp, PSet
+from src.zone import Zone
+from src.util import lName, getLogger, configureLogger, parse_args, fromCsv
 
 log = getLogger(lName)
 
@@ -76,12 +76,12 @@ def factions(): return fromCsv('data/data_factions.csv')
 
 def pcs():
 	with open('data/pcs.json', 'r') as jfile:
-		pcs = json.load(jfile, object_hook = Character.from_json)
+		chars = json.load(jfile, object_hook = Character.from_json)
 	# assign to each player character their macro
-	for tok in pcs:
+	for tok in chars:
 		tok.macros.append(SMacro("Sheet", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
 		tok.macros.append(SMacro("Resleeve", '[macro("Resleeve@Lib:ep"): ""]', 'Sheet', ('white', 'blue')))
-	return pcs
+	return chars
 
 def libMacros():
 	macros = []
@@ -90,8 +90,9 @@ def libMacros():
 		TMacro("Sheet", 'sheet.template', 'Sheet', ('white', 'blue')),
 		TMacro("EgoSheet", 'egoSheet.template', 'Sheet', ('white', 'blue')),
 		TMacro("MorphSheet", 'morphSheet.template', 'Sheet', ('white', 'blue')),
-		TMacro("Skills", 'skills.template', 'Skills', ('white', 'black')),
-		TMacro("onCampaignLoad", 'onCampaignLoad.template', 'Misc', ('white', 'black')),
+		TMacro("Skills", 'skills.template', 'func', ('white', 'black')),
+		TMacro("Morphs", 'morphs.template', 'func', ('white', 'black')),
+		TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black')),
 	])
 	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
 	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])

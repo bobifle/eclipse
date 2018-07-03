@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-from util import jenv
+from src.util import jenv
 
 class Macro(object):
 

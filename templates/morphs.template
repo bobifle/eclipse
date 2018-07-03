@@ -1,0 +1,7 @@
+[h: tokens = getTokens()]
+[h: results = "[]"]
+[h,foreach(tok, tokens, ""), code: {
+	[h, if(getProperty("type", tok)=="morph"): result=json.append(results, tok)]
+}]
+
+[h: macro.return=results]
