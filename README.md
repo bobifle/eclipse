@@ -1,7 +1,7 @@
 # eclipse
 eclipse phase tools
 
-##Dependencies
+## Dependencies
 
 Optional: The fonts "Garamond" and "HelioType" (http://www.fontpalace.com/font-download/Heliotype+LET+Plain1.0/)
 

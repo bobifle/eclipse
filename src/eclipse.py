@@ -96,11 +96,23 @@ def libMacros():
 	])
 	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
 	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
+	macros.extend([ LibMacro(sl['name'],'Sleights', ('white','blue'), sl) for sl in fromCsv('data/data_sleights.csv')])
 	return macros
 
 # build the list of lib tokens
 def libTokens():
-	return [LToken('Lib:ep', libMacros())]
+	libs = [LToken('Lib:ep', libMacros())]
+	# the gear lib
+	emacros = []
+	for (group, fp ,colors) in [
+			('Gear', 'data/data_gear.csv', ('white', 'green')),
+			('Armors', 'data/data_armor.csv', ('white', 'blue')),
+			('Melee Weapons', 'data/data_melee_weapons.csv', ('white', 'red')),
+			('Ranged Weapons', 'data/data_ranged_weapons.csv', ('white', 'red')),
+			]:
+		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	libs.append(LToken('Lib:eqt', emacros))
+	return libs
 
 def main():
 	options, args = parse_args()
