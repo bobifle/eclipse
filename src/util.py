@@ -56,7 +56,7 @@ def parse_args():
 
 def jenv():
 	"""Return a jinja environment."""
-	global _jenv
+	global _jenv # pylint: disable= W0603
 	if _jenv is None:
 		_jenv = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
 		_jenv.filters['json2mt'] = lambda s: s.replace(r"\"", r"\'")

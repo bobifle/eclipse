@@ -126,7 +126,7 @@ def libTokens():
 	return libs
 
 def main():
-	options, args = parse_args()
+	options, _ = parse_args()
 	configureLogger(options.verbose)
 	_morphs = getMorphs()
 	zone = Zone('Library')
@@ -139,10 +139,10 @@ def main():
 	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
 	plib = PSet('Lib', [])
 	# Build the Lib property type (empty)
-	cp = Campaign('eclipse')
-	cp.build([zone], [pc, pmorph, plib], [eclipseTable()])
-	log.warning('Done building %s with a total of %s macros' % (cp, len(list(cp.macros))))
-	return cp
+	ecp = Campaign('eclipse')
+	ecp.build([zone], [pc, pmorph, plib], [eclipseTable()])
+	log.warning('Done building %s with a total of %s macros' % (ecp, len(list(ecp.macros))))
+	return ecp
 
 if __name__== '__main__':
 	cp = main()

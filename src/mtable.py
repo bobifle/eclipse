@@ -30,4 +30,4 @@ class Table(MutableSequence):
 	def __setitem__(self, k, v): self.entries[k] = v
 	def __delitem__(self, k): del self.entries[k]
 	def __len__(self): return len(self.entries)
-	def insert(self, k, v): return self.entries.insert(k,v)
+	def insert(self, k, v): return self.entries.insert(k,v) # pylint: disable=W0221

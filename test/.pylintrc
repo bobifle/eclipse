@@ -52,7 +52,7 @@ load-plugins=
 # pylint 0.21 is bugg, if -E is specified (errors only) it will reenable all Error ID. So let's disable all the categories C,W,R,F here
 # so we don't need to specify the -E option
 #disable=C,R,F,W,similarities,C0301,W0331,W0105,W0621,E1103,W0232,W0141
-disable=C,R,F,similarities,W1201
+disable=C,R,F,similarities,W1201,W0403
 
 
 [REPORTS]
