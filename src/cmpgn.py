@@ -76,20 +76,16 @@ class Campaign(object):
 
 class CProp(object):
 	"""Campaign property."""
-	def __init__(self, name, showOnSheet, defaultValue):
-		self.name=name
-		self._showOnSheet = showOnSheet
-		self.defaultValue = defaultValue
+	def __init__(self, jd):
+		self.name=jd["name"] # jd => json data
+		self.showOnSheet = jd.get('showOnSheet', "false")
+		self.defaultValue = jd.get('value', '')
+		self.shortname= jd.get('shortname', '')
+		self.gmOnly = jd.get('gmOnly', "false")
+		self.ownerOnly = jd.get('ownerOnly', "false")
 	@classmethod
-	def fromTProp(cls, token_prop):
-		return cls(token_prop.name, False, '')
+	def fromTProp(cls, token_prop): return cls({"name": token_prop.name})
 	def __repr__(self): return '%s<%s>' % (self.__class__.__name__, self.name)
-	@property
-	def shortname(self): return ''
-	@property
-	def showOnSheet(self): return "true" if self._showOnSheet else 'false'
-	@showOnSheet.setter
-	def showOnSheet(self, v): self._showOnSheet = v
 	def render(self):
 		return jinja2.Template('''            <net.rptools.maptool.model.TokenProperty>
               <name>{{prop.name}}</name>
@@ -97,8 +93,8 @@ class CProp(object):
 	      <shortName>{{prop.shortname}}</shortName>}
 	      {% endif -%}
               <highPriority>{{prop.showOnSheet}}</highPriority>
-              <ownerOnly>false</ownerOnly>
-              <gmOnly>false</gmOnly>
+              <ownerOnly>{{ownerOnly}}</ownerOnly>
+              <gmOnly>{{prop.gmOnly}}</gmOnly>
               <defaultValue>{{prop.defaultValue}}</defaultValue>
             </net.rptools.maptool.model.TokenProperty>''').render(prop=self)
 

@@ -3,7 +3,7 @@
     "name": "JOSEF BVES", 
     "concept": "Conspiracy Leader", 
     "attributes": {
-        "cognitition": 20, 
+        "cognition": 20, 
         "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
@@ -13,10 +13,10 @@
         "durability": 35, 
         "wound_th": 7, 
         "DR": 53, 
-        "TP": 6
+        "TP": 6,
+    	"energy": 5, 
+	    "kinetic": 4
     }, 
-    "energy": 5, 
-    "kinetic": 4, 
     "morph": "bouncer", 
     "skills": {
         "Deceive": 50, 
@@ -53,7 +53,7 @@
     "name": "LUKE BEST", 
     "concept": "Confessor Hacker", 
     "attributes": {
-        "cognitition": 20, 
+        "cognition": 20, 
         "intuition": 10, 
         "reflex": 10, 
         "savvy": 15, 
@@ -63,10 +63,10 @@
         "durability": 0, 
         "wound_th": 0, 
         "DR": 0, 
-        "TP": 4
+        "TP": 4,
+    	"energy": 0, 
+	    "kinetic": 0
     }, 
-    "energy": 0, 
-    "kinetic": 0, 
     "morph": "agent infomorph", 
     "skills": {
         "Free Fall": 40, 
@@ -85,7 +85,7 @@
     "name": "DR. JU GUO", 
     "concept": "Fa Jing Branch Manager", 
     "attributes": {
-        "cognitition": 20, 
+        "cognition": 20, 
         "intuition": 15, 
         "reflex": 15, 
         "savvy": 20, 
@@ -95,10 +95,10 @@
         "durability": 35, 
         "wound_th": 7, 
         "DR": 53, 
-        "TP": 6
+        "TP": 6,
+    	"energy": 0, 
+	    "kinetic": 0
     }, 
-    "energy": 0, 
-    "kinetic": 0, 
     "morph": "menton pod", 
     "skills": {
         "Deceive": 40, 
@@ -124,7 +124,7 @@
     "name": "CHANG'E JADE", 
     "concept": "Gossip Blogger", 
     "attributes": {
-        "cognitition": 15, 
+        "cognition": 15, 
         "intuition": 15, 
         "reflex": 15, 
         "savvy": 20, 
@@ -134,10 +134,10 @@
         "durability": 25, 
         "wound_th": 5, 
         "DR": 50, 
-        "TP": 3
+        "TP": 3,
+    	"energy": 6, 
+	    "kinetic": 4
     }, 
-    "energy": 6, 
-    "kinetic": 4, 
     "morph": "dragonfly", 
     "skills": {
         "Athletics": 50, 
@@ -170,7 +170,7 @@
     "name": "CONSTABLE YU", 
     "concept": "Fa Jing Security Officer", 
     "attributes": {
-        "cognitition": 15, 
+        "cognition": 15, 
         "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
@@ -180,10 +180,10 @@
         "durability": 35, 
         "wound_th": 7, 
         "DR": 53, 
-        "TP": 4
+        "TP": 4,
+    	"energy": 6, 
+	    "kinetic": 13
     }, 
-    "energy": 6, 
-    "kinetic": 13, 
     "morph": "security pod", 
     "skills": {
         "Fray": 50, 
@@ -218,7 +218,7 @@
     "name": "THUGS", 
     "concept": "Thug", 
     "attributes": {
-        "cognitition": 15, 
+        "cognition": 15, 
         "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
@@ -228,10 +228,10 @@
         "durability": 35, 
         "wound_th": 7, 
         "DR": 53, 
-        "TP": 2
+        "TP": 2,
+    	"energy": 4, 
+	    "kinetic": 10
     }, 
-    "energy": 4, 
-    "kinetic": 10, 
     "morph": "bouncer", 
     "skills": {
         "Athletics": 50, 

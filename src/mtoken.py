@@ -237,7 +237,7 @@ class TProp(object):
 		match = re.search(r'(\w+): (.*)', self.name)
 		if match is not None:
 			self.name = u"%s | %s" % (match.group(1), match.group(2))
-			log.debug("Unsupported proeprty name %s, changing it to  %s" % (name, self.name))
+			log.debug("Unsupported property name %s, changing it to  %s" % (name, self.name))
 		validate(self.name)
 	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
 

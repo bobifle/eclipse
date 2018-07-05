@@ -28,8 +28,8 @@ pc_props='''[
 ]
 '''
 npc_props='''[
-{"name": "aptitudes", "showOnSheet": false, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
-{"name": "others", "showOnSheet": false, "value": "WT {wound_th} | DR {DR} | DUR {durability} | TP {TP} | Armor {energy}/{kinetic}"}
+{"name": "aptitudes", "showOnSheet": "true", "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
+{"name": "others", "showOnSheet": "true", "value": "WT {wound_th} | DR {DR} | DUR {durability} | TP {TP} | Armor {energy}/{kinetic}"}
 ]
 '''
 
@@ -140,13 +140,13 @@ def propertySets():
 	sets = [PSet('Lib', [])] # the Lib property set is empty for now
 	# Build the PC property type # XXX rebuilding pcs just for the first element :-/
 	sets.append(PSet('PC',
-		[CProp.fromTProp(p) for p in pcs()[0].props] + [CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)]
+		[CProp.fromTProp(p) for p in pcs()[0].props] + [CProp(p) for p in json.loads(pc_props)]
 		))
 	sets.append(PSet('MORPH',
-		[CProp.fromTProp(p) for p in morphs()[0].props] + [CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)]
+		[CProp.fromTProp(p) for p in morphs()[0].props] + [CProp(p) for p in json.loads(morph_props)]
 		))
 	sets.append(PSet('NPC',
-		[CProp.fromTProp(p) for p in npcs()[0].props] +[CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(npc_props)]
+		[CProp.fromTProp(p) for p in npcs()[0].props] +[CProp(p) for p in json.loads(npc_props)]
 		))
 	return sets
 
