@@ -6,6 +6,8 @@ import difflib
 import itertools
 import glob
 import jinja2
+import json
+import re
 
 from util import jenv, Img, getLogger, guid
 
@@ -13,14 +15,32 @@ log = getLogger(__name__)
 
 imglibs = [ 'imglib', ]
 
+def validate(propname):
+	for c in r':<>\!;,*$#':
+		if c in propname:
+			raise ValueError("Invalid property name '%s'" % propname)
+
 class Token(object):
 	sentinel = object()
+	@classmethod
+	def from_json(cls, dct):
+		_type = dct.get("_type", None)
+		if _type is not None:
+			if _type.lower() != cls.__name__.lower():
+				raise ValueError("Wrong json type (%s) passed to class %s" % (_type, cls.__name__))
+			ret = cls()
+			for k,v in dct.iteritems():
+				validate(k)
+				setattr(ret, k, v)
+			return ret
+		return dct
 
 	def __init__(self):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
 		self._guid = self.sentinel
 		self.macros = []
+		self.layer = 'TOKEN'
 		self.name = 'defaultName'
 		self.size = 'medium'
 		self.assets = {}
@@ -83,9 +103,6 @@ class Token(object):
 	def properties_xml(self):
 		content = jenv().get_template('token_properties.template').render(token=self).encode("utf-8")
 		return content or ''
-
-	@property
-	def layer(self): raise NotImplementedError
 
 	def render(self): return self.content_xml
 
@@ -159,12 +176,11 @@ class IToken(Token):
 		Token.__init__(self, *args, **kwargs)
 		self.snapToGrid = 'false'
 		self.snapToScale = 'false'
+		self.layer = 'BACKGROUND'
 	@property
 	def props(self): return []
 	@property
 	def states(self): return []
-	@property
-	def layer(self): return 'BACKGROUND'
 	@property
 	def type(self): return 'Img'
 	@property
@@ -173,41 +189,34 @@ class IToken(Token):
 
 class Map(IToken): pass
 
+class NPC(Token):
+	@property
+	def type(self): return 'NPC'
+	@property
+	def prop_type(self): return 'NPC'
+	@property
+	def states(self): return []
+	@property
+	def props(self):
+		# XXX there's a glitch, npcs have a struture like skills = {'foo': 50, 'bar':40} whiel pcs have skills= [{'foo':50}, {'bar':40}]
+		properties = [TProp(k,v) for k,v in itertools.chain(self.attributes.iteritems(), self.skills.iteritems())]
+		properties.extend([TProp(attr, json.dumps(getattr(self, attr))) for attr in ['morph', 'ware', 'weapons']])
+		return properties
+
 class Character(Token):
 	def __init__(self, *args, **kwargs):
 		Token.__init__(self, *args, **kwargs)
 		self.hasSight = 'true'
-	@classmethod
-	def from_json(cls, dct):
-		_type = dct.get("_type", None)
-		if _type is not None and _type.lower() == "character":
-			ret = cls()
-			for k,v in dct.iteritems(): setattr(ret, k, v)
-			return ret
-		return dct
-
 	def __repr__(self): return 'Char<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
 
 	@property
-	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills, [{"morph": self.morph}])]
+	def props(self):
+		return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills, [{"morph": self.morph}])]
 	@property
 	def states(self): return []
-	@property
-	def layer(self): return 'TOKEN'
 
 class Morph(Character):
-	@classmethod
-	def from_json(cls, dct):
-		_type = dct.get("_type", None)
-		if _type is not None and _type.lower() == "morph":
-			ret = cls()
-			for k,v in dct.iteritems():
-				setattr(ret, k, v)
-			return ret
-		return dct
 	def __repr__(self): return 'Morph<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
-	@property
-	def layer(self): return 'TOKEN'
 	@property
 	def matchImg(self): return self.name
 	@property
@@ -223,6 +232,13 @@ class TProp(object):
 	def __init__(self, name, value):
 		self.name = name
 		self.value = value
+		# change props in the form "Know: sports" in to "Know (sport)"
+		# because MT does not support : in prop names
+		match = re.search(r'(\w+): (.*)', self.name)
+		if match is not None:
+			self.name = u"%s | %s" % (match.group(1), match.group(2))
+			log.debug("Unsupported proeprty name %s, changing it to  %s" % (name, self.name))
+		validate(self.name)
 	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
 
 	@property
@@ -248,8 +264,6 @@ class LToken(Token):
 		self.size = 'huge'
 		self.images = []
 		self.props = []
-	@property
-	def layer(self): return 'TOKEN'
 	@property
 	def states(self): return []
 	@property

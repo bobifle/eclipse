@@ -3,7 +3,7 @@
 import json
 import csv
 
-from mtoken import Character, Morph, LToken
+from mtoken import Character, Morph, LToken, NPC
 from macro import CssMacro, TMacro, LibMacro, SMacro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
@@ -23,11 +23,18 @@ pc_props='''[
 {"name": "lucidity", "showOnSheet": true, "value": "{willpower*2}"},
 {"name": "insanity", "showOnSheet": true, "value": "{lucidity*2}"},
 {"name": "trauma", "showOnSheet": true, "value": "{lucidity/5}"},
-{"name": "infection", "showOnSheet": true, "value": "{psi*10}"}
+{"name": "infection", "showOnSheet": true, "value": "{psi*10}"},
+{"name": "morph", "showOnSheet": true, "value": "{morph}"}
+]
+'''
+npc_props='''[
+{"name": "aptitudes", "showOnSheet": false, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
+{"name": "others", "showOnSheet": false, "value": "WT {wound_th} | DR {DR} | DUR {durability} | TP {TP} | Armor {energy}/{kinetic}"}
 ]
 '''
 
-def getMorphs():
+
+def morphs():
 	"""Fetch morphs from the csvFile"""
 	_morphs= []
 	with open('data/data_morphs.csv', 'r') as csvfile:
@@ -83,6 +90,10 @@ def pcs():
 		tok.macros.append(SMacro("Resleeve", '[macro("Resleeve@Lib:ep"): ""]', 'Sheet', ('white', 'blue')))
 	return chars
 
+def npcs():
+	with open('data/npcs.json', 'r') as jfile:
+		return json.load(jfile, object_hook = NPC.from_json)
+
 def libMacros():
 	macros = []
 	macros.extend([
@@ -125,22 +136,28 @@ def libTokens():
 	libs.append(LToken('Lib:weap', emacros, 'imglib/icons/space-suit.png'))
 	return libs
 
+def propertySets():
+	sets = [PSet('Lib', [])] # the Lib property set is empty for now
+	# Build the PC property type # XXX rebuilding pcs just for the first element :-/
+	sets.append(PSet('PC',
+		[CProp.fromTProp(p) for p in pcs()[0].props] + [CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)]
+		))
+	sets.append(PSet('MORPH',
+		[CProp.fromTProp(p) for p in morphs()[0].props] + [CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)]
+		))
+	sets.append(PSet('NPC',
+		[CProp.fromTProp(p) for p in npcs()[0].props] +[CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(npc_props)]
+		))
+	return sets
+
 def main():
 	options, _ = parse_args()
 	configureLogger(options.verbose)
-	_morphs = getMorphs()
 	zone = Zone('Library')
-	zone.build(pcs()+_morphs+libTokens())
-	# Build the PC property type
-	pc = PSet('PC', [CProp.fromTProp(p) for p in pcs()[0].props]) # XXX rebuilding pcs just for the first element :-/
-	pc.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(pc_props)])
-	# Build the Morph property type
-	pmorph = PSet('MORPH', [CProp.fromTProp(p) for p in _morphs[0].props])
-	pmorph.props.extend([CProp(p['name'], p['showOnSheet'], p['value']) for p in json.loads(morph_props)])
-	plib = PSet('Lib', [])
-	# Build the Lib property type (empty)
+	zone.build(pcs()+npcs()+morphs()+libTokens())
+	for t in npcs(): t.zipme()
 	ecp = Campaign('eclipse')
-	ecp.build([zone], [pc, pmorph, plib], [eclipseTable()])
+	ecp.build([zone], propertySets(), [eclipseTable()])
 	log.warning('Done building %s with a total of %s macros' % (ecp, len(list(ecp.macros))))
 	return ecp
 

@@ -1,10 +1,10 @@
-{
+[{
     "_type": "NPC", 
     "name": "JOSEF BVES", 
     "concept": "Conspiracy Leader", 
     "attributes": {
         "cognitition": 20, 
-        "intuiation": 15, 
+        "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
         "somatics": 15, 
@@ -47,14 +47,14 @@
     "weapons": [
         "Medium Pistol (DV 2d10, SA/BF/FA)"
     ]
-}
+},
 {
     "_type": "NPC", 
     "name": "LUKE BEST", 
     "concept": "Confessor Hacker", 
     "attributes": {
         "cognitition": 20, 
-        "intuiation": 10, 
+        "intuition": 10, 
         "reflex": 10, 
         "savvy": 15, 
         "somatics": 10, 
@@ -79,14 +79,14 @@
     }, 
     "ware": [], 
     "weapons": []
-}
+},
 {
     "_type": "NPC", 
     "name": "DR. JU GUO", 
     "concept": "Fa Jing Branch Manager", 
     "attributes": {
         "cognitition": 20, 
-        "intuiation": 15, 
+        "intuition": 15, 
         "reflex": 15, 
         "savvy": 20, 
         "somatics": 10, 
@@ -118,14 +118,14 @@
         "Mnemonics"
     ], 
     "weapons": []
-}
+},
 {
     "_type": "NPC", 
     "name": "CHANG'E JADE", 
     "concept": "Gossip Blogger", 
     "attributes": {
         "cognitition": 15, 
-        "intuiation": 15, 
+        "intuition": 15, 
         "reflex": 15, 
         "savvy": 20, 
         "somatics": 15, 
@@ -164,14 +164,14 @@
         "Wings"
     ], 
     "weapons": []
-}
+},
 {
     "_type": "NPC", 
     "name": "CONSTABLE YU", 
     "concept": "Fa Jing Security Officer", 
     "attributes": {
         "cognitition": 15, 
-        "intuiation": 15, 
+        "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
         "somatics": 15, 
@@ -212,14 +212,14 @@
     "weapons": [
         "Medium Pistol (DV 2d10, SA/BF/FA)"
     ]
-}
+},
 {
     "_type": "NPC", 
     "name": "THUGS", 
     "concept": "Thug", 
     "attributes": {
         "cognitition": 15, 
-        "intuiation": 15, 
+        "intuition": 15, 
         "reflex": 15, 
         "savvy": 15, 
         "somatics": 15, 
@@ -257,4 +257,4 @@
     "weapons": [
         "Assault rifle (DV 2d10 + 2, SA/BF/FA)"
     ]
-}
+}]
