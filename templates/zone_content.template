@@ -38,7 +38,7 @@
           <imageScaleX>1.0</imageScaleX>
           <imageScaleY>1.0</imageScaleY>
           <tokenVisionDistance>1000</tokenVisionDistance>
-          <unitsPerCell>5</unitsPerCell>
+          <unitsPerCell>1</unitsPerCell>
           <drawables class="linked-list"/>
           <gmDrawables class="linked-list"/>
           <objectDrawables class="linked-list"/>
