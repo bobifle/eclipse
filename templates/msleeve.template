@@ -1,7 +1,5 @@
 <!-- attributes-->
 [h: attributes = "wound_th,durability,insight,moxie,vigor,flex"]
-[h: sleeve = "{}"]
-[h,foreach(attr, attributes, "", ","), code: {
-	[h: json.set(sleeve, attr,{getProperty(attr)})]
-}]
-[h: macro.return=sleeve]
+[r: ep.isMorph()]
+[r: getSelected()]
+[h: macro.return]

@@ -6,12 +6,15 @@ from util import jenv
 
 class Macro(object):
 
-	def __init__(self, label, tmpl, group, colors):
+	def __init__(self, label, tmpl, group, colors, others=None):
 		self.tmpl = tmpl
 		self._label = label
 		self.colors = colors
 		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib
 		self.group = group
+		self.others = others if (others is not None) else {}
+		self.allowPlayerEdits = 'false'
+		self.autoExecute = 'true'
 
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
@@ -29,14 +32,14 @@ class TMacro(Macro):
 	"""Template Macro"""
 	@property
 	def command(self):
-		return jenv().get_template(self.tmpl).render(macro=self).encode("utf-8")
+		return jenv().get_template(self.tmpl).render(macro=self, **self.others).encode("utf-8")
 
 class SMacro(Macro):
 	"""Template Macro"""
 	@property
 	def command(self):
 		#XXX no env available !
-		return jinja2.Template(self.tmpl).render(macro=self).encode("utf-8")
+		return jinja2.Template(self.tmpl).render(macro=self, **self.others).encode("utf-8")
 
 class LibMacro(TMacro):
 	def __init__(self, label, group, colors, data):

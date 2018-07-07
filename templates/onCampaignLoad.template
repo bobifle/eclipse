@@ -1,3 +1,6 @@
-[h: defineFunction("eclipse.skills", "Skills@Lib:ep")]
+<!-- define eclipse phase lib functions -->
+{%- for func in functions %}
+[h: defineFunction("ep.{{func}}", "{{func}}@Lib:ep")]
+{%- endfor %}
 
 [r: "Welcome to Eclipse Phase !"]

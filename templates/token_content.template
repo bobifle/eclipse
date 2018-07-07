@@ -87,14 +87,14 @@
                       <label>{{macro.label}}</label>
                       <group>{{macro.group}}</group>
                       <sortby></sortby>
-                      <autoExecute>true</autoExecute>
+                      <autoExecute>{{macro.autoExecute}}</autoExecute>
                       <includeLabel>false</includeLabel>
                       <applyToTokens>true</applyToTokens>
                       <fontColorKey>{{macro.fontColor}}</fontColorKey>
                       <fontSize>1.00em</fontSize>
                       <minWidth>90</minWidth>
                       <maxWidth></maxWidth>
-                      <allowPlayerEdits>true</allowPlayerEdits>
+                      <allowPlayerEdits>{{macro.allowPlayerEdits}}</allowPlayerEdits>
                       <toolTip></toolTip>
                       <commonMacro>false</commonMacro>
                       <compareGroup>true</compareGroup>
