@@ -163,7 +163,7 @@ def main():
 	for t in npcs(): t.zipme()
 	ecp = Campaign('eclipse')
 	ecp.build([zone], propertySets(), [eclipseTable()])
-	log.warning('Done building %s with a total of %s macros' % (ecp, len(list(ecp.macros))))
+	log.warning('Done building %s with a total of %s macros, %s assets' % (ecp, len(list(ecp.macros)), len(list(ecp.assets))))
 	return ecp
 
 if __name__== '__main__':

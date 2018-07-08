@@ -39,6 +39,7 @@ class Token(object):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
 		self._guid = self.sentinel
+		self._content = self.sentinel
 		self.macros = []
 		self.layer = 'TOKEN'
 		self.name = 'defaultName'
@@ -96,8 +97,9 @@ class Token(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('token_content.template').render(token=self).encode("utf-8")
-		return content or ''
+		if self._content is self.sentinel:
+			self._content = jenv().get_template('token_content.template').render(token=self).encode("utf-8")
+		return self._content or ''
 
 	@property
 	def properties_xml(self):
