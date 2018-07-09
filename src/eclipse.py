@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import csv
+import shutil
 
 from mtoken import Character, Morph, LToken, NPC
 from macro import CssMacro, TMacro, LibMacro, SMacro
@@ -158,6 +159,9 @@ def propertySets():
 def main():
 	options, _ = parse_args()
 	configureLogger(options.verbose)
+	if options.clean:
+		log.warning("cleaning the build directory")
+		shutil.rmtree('build')
 	zone = Zone('Library')
 	zone.build(pcs()+npcs()+morphs()+libTokens())
 	for t in npcs(): t.zipme()

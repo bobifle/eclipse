@@ -52,6 +52,8 @@ def parse_args():
 	parser = optparse.OptionParser()
 	parser.add_option('-v', '--verbose', dest='verbose', action='count', default=0,
 			help='increase the logging level')
+	parser.add_option('-c', '--clean', dest='clean', action='store_true', default=False,
+			help='clean the build directory')
 	return parser.parse_args()
 
 def jenv():
