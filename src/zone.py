@@ -37,7 +37,7 @@ class Zone(object):
 			tok.x = x + (col)*xscale
 			tok.y = y + line*100
 		main_scene = Map()
-		main_scene.name = 'empty_pate_blue'
+		main_scene.name = 'empty_page_blue'
 		main_scene.y = 0
 		main_scene.x=0
 		self.tokens.append(main_scene)

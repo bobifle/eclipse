@@ -679,17 +679,19 @@
       <null/>
     </entry>
 {%- endfor %}
-{%- for token in cmpgn.tokens %}
+{%- for zone in cmpgn.zones %}{% set zoneId=loop.index %}
+{%- for token in zone.tokens %}
     <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry[{{zoneId}}]/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/imageAssetMap/entry/net.rptools.lib.MD5Key"/>
       <null/>
     </entry>
 {%- if token.portrait %}
     <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/portraitImage"/>
+      <net.rptools.lib.MD5Key reference="../../../campaign/zones/entry[{{zoneId}}]/net.rptools.maptool.model.Zone/tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token/portraitImage"/>
       <null/>
     </entry>
 {%- endif %}
+{%- endfor %}
 {%- endfor %}
   </assetMap>
   <currentZoneId reference="../campaign/zones/entry/net.rptools.maptool.model.GUID"/>

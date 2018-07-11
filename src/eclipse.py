@@ -164,9 +164,9 @@ def main():
 		shutil.rmtree('build')
 	zone = Zone('Library')
 	zone.build(pcs()+npcs()+morphs()+libTokens())
-	for t in npcs(): t.zipme()
 	ecp = Campaign('eclipse')
-	ecp.build([zone], propertySets(), [eclipseTable()])
+	dmScreen = Zone('DM Screen')
+	ecp.build([zone, dmScreen], propertySets(), [eclipseTable()])
 	log.warning('Done building %s with a total of %s macros, %s assets' % (ecp, len(list(ecp.macros)), len(list(ecp.assets))))
 	return ecp
 

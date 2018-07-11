@@ -56,9 +56,8 @@
           </tokenMap>
           <exposedAreaMeta/>
           <tokenOrderedList class="linked-list">
-            <net.rptools.maptool.model.Token reference="../../tokenMap/entry/net.rptools.maptool.model.Token"/>
-{%- for token in zone.tokens[1:] %}
-            <net.rptools.maptool.model.Token reference="../../tokenMap/entry[{{loop.index+1}}]/net.rptools.maptool.model.Token"/>
+{%- for token in zone.tokens %}
+            <net.rptools.maptool.model.Token reference="../../tokenMap/entry[{{loop.index}}]/net.rptools.maptool.model.Token"/>
 {%- endfor %}
           </tokenOrderedList>
           <initiativeList>
