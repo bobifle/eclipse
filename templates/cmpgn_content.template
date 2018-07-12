@@ -673,11 +673,13 @@
     <macroButtonLastIndex>0</macroButtonLastIndex>
   </campaign>
   <assetMap>
-{%- for asset in cmpgn.tableAssets %}
+{%- for table in cmpgn.tables %} {% set tindex=loop.index %}
+{%- for asset in table.assets %}
      <entry>
-      <net.rptools.lib.MD5Key reference="../../../campaign/campaignProperties/lookupTableMap/entry/net.rptools.maptool.model.LookupTable/entryList/net.rptools.maptool.model.LookupTable_-LookupEntry[{{loop.index}}]/imageId"/>
+      <net.rptools.lib.MD5Key reference="../../../campaign/campaignProperties/lookupTableMap/entry[{{tindex}}]/net.rptools.maptool.model.LookupTable/entryList/net.rptools.maptool.model.LookupTable_-LookupEntry[{{loop.index}}]/imageId"/>
       <null/>
     </entry>
+{%- endfor %}
 {%- endfor %}
 {%- for zone in cmpgn.zones %}{% set zoneId=loop.index %}
 {%- for token in zone.tokens %}

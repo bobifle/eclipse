@@ -11,7 +11,7 @@ class Entry(object):
 		self.min = _min
 		self.max = _max
 		self.value = value
-		self.img = Img(imfp)
+		self.img = Img(imfp) if imfp else None
 
 class Table(MutableSequence):
 	def __init__(self, name, imgfp):
@@ -21,7 +21,7 @@ class Table(MutableSequence):
 		self.roll = ''
 
 	@property
-	def assets(self): return {e.img.fp: e.img for e in self.entries}
+	def assets(self): return {e.img.fp: e.img for e in self.entries if e.img} 
 
 	def render(self):
 		return jenv().get_template('table_content.template').render(table=self)

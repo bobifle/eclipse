@@ -156,6 +156,12 @@ def propertySets():
 		))
 	return sets
 
+def nameTable():
+    t = Table('Names', 'imglib/ep_logo.png')
+    for i, name in enumerate(['John', 'Bob', 'Marc', 'Gerald']):
+        t.append(Entry(i, i, name, None))
+    return t
+
 def main():
 	options, _ = parse_args()
 	configureLogger(options.verbose)
@@ -166,7 +172,7 @@ def main():
 	zone.build(pcs()+npcs()+morphs()+libTokens())
 	ecp = Campaign('eclipse')
 	dmScreen = Zone('DM Screen')
-	ecp.build([zone, dmScreen], propertySets(), [eclipseTable()])
+	ecp.build([zone, dmScreen], propertySets(), [eclipseTable(), nameTable()])
 	log.warning('Done building %s with a total of %s macros, %s assets' % (ecp, len(list(ecp.macros)), len(list(ecp.assets))))
 	return ecp
 
