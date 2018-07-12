@@ -93,7 +93,10 @@ def pcs():
 
 def npcs():
 	with open('data/npcs.json', 'r') as jfile:
-		return json.load(jfile, object_hook = NPC.from_json)
+		npc_list = json.load(jfile, object_hook = NPC.from_json)
+	for tok in npc_list:
+		tok.macros.append(SMacro("Rename", '[h: name=tbl("Names")][h: setName(name)]', 'Sheet', ('white', 'blue')))
+	return npc_list
 
 def libMacros():
 	macros = []
