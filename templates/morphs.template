@@ -1,3 +1,4 @@
+<!-- return the list of morph tokens -->
 [h: tokens = getTokens()]
 [h: results = "[]"]
 [h,foreach(tok, tokens, ""), code: {

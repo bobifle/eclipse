@@ -203,6 +203,9 @@ class NPC(Token):
 		# XXX there's a glitch, npcs have a struture like skills = {'foo': 50, 'bar':40} whiel pcs have skills= [{'foo':50}, {'bar':40}]
 		properties = [TProp(k,v) for k,v in itertools.chain(self.attributes.iteritems(), self.skills.iteritems())]
 		properties.extend([TProp(attr, json.dumps(getattr(self, attr))) for attr in ['morph', 'ware', 'weapons']])
+		# XXX ugly patch convert morph name into a string, need a reliable way to convert json string into mt property value
+		for p in properties: 
+			if p.name.lower() == "morph": p.value= p.value.replace('"', '')
 		return properties
 
 class Character(Token):

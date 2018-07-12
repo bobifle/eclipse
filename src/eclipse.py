@@ -42,7 +42,31 @@ smacros = {
 [h: tids = getSelected()]
 [h: selectTokens(tids)]
 [h: abort(0)] <!-- silence de macro -->
-'''
+''',
+	"Resleeve":'''
+<!-- Set the token image according to its morph value -->
+[h:  img = ep.getMorphImg()]
+[r,if (img!=""), code: {
+	[h:setTokenImage(img)] is resleeving the morph [r: getProperty("Morph")] 
+	};{
+	cannot resleeve into [r: getProperty("Morph")], it s not found in the morph tablelist
+	}
+]
+''',
+	"getMorphImg":'''
+<!-- Return the morph image-->
+[h: end = table("Morphs", 5000)]
+[h: index = 1]
+[h: morphName = getProperty("Morph")]
+[h: found = 0]
+[h: name = ""]
+[h,while (name != end && found==0),code : {
+	[h: name = table("Morphs", index)]
+	[h,if (name==morphName), code: {[h:macro.return=tableImage("Morphs", index)][h:found=1]};{}]
+	[h: index = index+1]
+}
+]
+''',
 }
 
 
@@ -108,6 +132,7 @@ def npcs():
 		npc_list = json.load(jfile, object_hook = NPC.from_json)
 	for tok in npc_list:
 		tok.macros.append(SMacro("Rename", smacros['Rename'], 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Resleeve", smacros['Resleeve'], 'Sheet', ('white', 'blue')))
 	return npc_list
 
 def libMacros():
@@ -120,6 +145,7 @@ def libMacros():
 		TMacro("Skills", 'skills.template', 'func', ('white', 'black')),
 		TMacro("LibInfo", 'libInfo.template', 'func', ('white', 'black')),
 		TMacro("Morphs", 'morphs.template', 'func', ('white', 'black')),
+		SMacro("getMorphImg", smacros['getMorphImg'], 'func', ('white', 'black')),
 	])
 	# functions
 	macros.extend([
@@ -129,7 +155,7 @@ def libMacros():
 	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
 	macros.extend([ LibMacro(sl['name'],'Sleights', ('white','blue'), sl) for sl in fromCsv('data/data_sleights.csv')])
 	# keep this one last, very important, as it is function of previous added macros
-	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': ['isMorph']}))
+	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': ['isMorph', 'getMorphImg']}))
 	return macros
 
 # build the list of lib tokens
@@ -178,6 +204,13 @@ def nameTable():
 			t.append(Entry(i, i, name, None))
 	return t
 
+def morphTable():
+	t = Table('Morphs', 'imglib/ep_logo.png')
+	for i, m in enumerate(morphs()):
+		if m.icon: t.append(Entry(i, i, m.name, m.icon.fp))
+	return t
+
+
 def main():
 	options, _ = parse_args()
 	configureLogger(options.verbose)
@@ -188,7 +221,7 @@ def main():
 	zone.build(pcs()+npcs()+morphs()+libTokens())
 	ecp = Campaign('eclipse')
 	dmScreen = Zone('DM Screen')
-	ecp.build([zone, dmScreen], propertySets(), [eclipseTable(), nameTable()])
+	ecp.build([zone, dmScreen], propertySets(), [eclipseTable(), nameTable(), morphTable()])
 	log.warning('Done building %s with a total of %s macros, %s assets' % (ecp, len(list(ecp.macros)), len(list(ecp.assets))))
 	return ecp
 
