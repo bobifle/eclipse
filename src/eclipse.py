@@ -34,6 +34,18 @@ npc_props='''[
 ]
 '''
 
+smacros = {
+	"Rename":'''
+[h: name=tbl("Names")]
+[h: setName(name)]
+<!-- reselect the token to update the selection window with the new name-->
+[h: tids = getSelected()]
+[h: selectTokens(tids)]
+[h: abort(0)] <!-- silence de macro -->
+'''
+}
+
+
 
 def morphs():
 	"""Fetch morphs from the csvFile"""
@@ -95,7 +107,7 @@ def npcs():
 	with open('data/npcs.json', 'r') as jfile:
 		npc_list = json.load(jfile, object_hook = NPC.from_json)
 	for tok in npc_list:
-		tok.macros.append(SMacro("Rename", '[h: name=tbl("Names")][h: setName(name)]', 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Rename", smacros['Rename'], 'Sheet', ('white', 'blue')))
 	return npc_list
 
 def libMacros():
@@ -160,10 +172,11 @@ def propertySets():
 	return sets
 
 def nameTable():
-    t = Table('Names', 'imglib/ep_logo.png')
-    for i, name in enumerate(['John', 'Bob', 'Marc', 'Gerald']):
-        t.append(Entry(i, i, name, None))
-    return t
+	t = Table('Names', 'imglib/ep_logo.png')
+	with open('data/names.json', 'r') as jfile:
+		for i, name in enumerate(json.load(jfile)["male"]):
+			t.append(Entry(i, i, name, None))
+	return t
 
 def main():
 	options, _ = parse_args()
