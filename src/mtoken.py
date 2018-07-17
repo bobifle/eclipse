@@ -234,6 +234,16 @@ class Morph(Character):
 
 class TProp(object):
 	"""Token property"""
+	# the template is the same for all instance, it's expensive to create 
+	# so a class attribute is a good option
+	templates = jinja2.Template('''      <entry>
+	    <string>{{prop.name.lower()}}</string>
+	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
+	      <key>{{prop.name}}</key>
+	      <value class="string">{{prop.value}}</value>
+	      <outer-class reference="../../../.."/>
+	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
+	  </entry>''')
 	def __init__(self, name, value):
 		self.name = name
 		self.value = value
@@ -250,14 +260,7 @@ class TProp(object):
 	def shortname(self): return self.name[:3].upper()
 
 	def render(self):
-		return jinja2.Template('''      <entry>
-	    <string>{{prop.name.lower()}}</string>
-	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
-	      <key>{{prop.name}}</key>
-	      <value class="string">{{prop.value}}</value>
-	      <outer-class reference="../../../.."/>
-	    </net.rptools.CaseInsensitiveHashMap_-KeyValue>
-	  </entry>''').render(prop=self)
+		return self.template.render(prop=self)
 
 class LToken(Token):
 	"""Library Token."""
