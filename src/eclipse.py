@@ -3,6 +3,8 @@
 import json
 import csv
 import shutil
+import cProfile
+import pstats
 
 from mtoken import Character, Morph, LToken, NPC
 from macro import CssMacro, TMacro, LibMacro, SMacro
@@ -212,8 +214,7 @@ def morphTable():
 	return t
 
 
-def main():
-	options, _ = parse_args()
+def main(options):
 	configureLogger(options.verbose)
 	if options.clean:
 		log.warning("cleaning the build directory")
@@ -227,4 +228,12 @@ def main():
 	return ecp
 
 if __name__== '__main__':
-	cp = main()
+	options, _ = parse_args()
+	if options.profile:
+		profile = cProfile.Profile()
+		profile.enable()
+	cp = main(options)
+	if options.profile:
+		with open("logs/profile.log", "w") as pfile:
+			ps = pstats.Stats(profile, stream=pfile).sort_stats('cumulative')
+			ps.print_stats()

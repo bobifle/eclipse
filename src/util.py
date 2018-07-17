@@ -42,7 +42,8 @@ def configureLogger(verbose):
 		mLog.addHandler(ch)
 
 	mLog.setLevel(logging.DEBUG) # don't filter anythig let the handlers to the filtering
-	fh = logging.FileHandler(os.path.join('build', mLog.name+'.log'), mode="w") # mode w will erase previous logs
+	if not os.path.exists('logs'): os.makedirs('logs')
+	fh = logging.FileHandler(os.path.join('logs', mLog.name+'.log'), mode="w") # mode w will erase previous logs
 	fh.setLevel(logging.DEBUG)
 	# create formatter and add it to the handlers
 	fh.setFormatter(formatter)
@@ -54,6 +55,8 @@ def parse_args():
 			help='increase the logging level')
 	parser.add_option('-c', '--clean', dest='clean', action='store_true', default=False,
 			help='clean the build directory')
+	parser.add_option('-p', '--profile', dest='profile', action='store_true', default=False,
+			help='profile the build execution')
 	return parser.parse_args()
 
 def jenv():
@@ -64,14 +67,20 @@ def jenv():
 		_jenv.filters['json2mt'] = lambda s: s.replace(r"\"", r"\'")
 	return _jenv
 
+imgCache = {}
+
 class Img(object):
 	"""A PIL.Image higher layer for MT assets."""
 	def __init__(self, fp):
 		self.bytes = io.BytesIO()
 		self.fp = fp
-		img = Image.open(fp)
+		# first try to get the img from the cache
+		img = imgCache.get(fp, None)
+		if img is None:
+			img = Image.open(fp)
+			img.save(self.bytes, format='png')
+			imgCache[fp] = img
 		self.x, self.y = img.size
-		img.save(self.bytes, format='png')
 		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
 
 	def __repr__(self): return "Img<%s,%s>" % (os.path.basename(self.fp), self.md5)
