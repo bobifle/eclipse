@@ -145,17 +145,18 @@ def libMacros():
 		TMacro("Skills", 'skills.template', 'func', ('white', 'black')),
 		TMacro("LibInfo", 'libInfo.template', 'func', ('white', 'black')),
 		TMacro("Morphs", 'morphs.template', 'func', ('white', 'black')),
+	])
+	# functions, will be defined as UDF by the onCampaignLoad macro
+	funcs = [
 		SMacro("getMorphImg", smacros['getMorphImg'], 'func', ('white', 'black')),
-	])
-	# functions
-	macros.extend([
 		SMacro("isMorph", '''[h: macro.return="false"][h:ptype=getPropertyType()][h,if (pType=="MORPH"): macro.return="true"]''', 'func', ('white', 'black'))
-	])
+	]
+	macros.extend(funcs)
 	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
 	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
 	macros.extend([ LibMacro(sl['name'],'Sleights', ('white','blue'), sl) for sl in fromCsv('data/data_sleights.csv')])
 	# keep this one last, very important, as it is function of previous added macros
-	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': ['isMorph', 'getMorphImg']}))
+	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': funcs}))
 	return macros
 
 # build the list of lib tokens

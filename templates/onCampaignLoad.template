@@ -1,6 +1,5 @@
-<!-- define eclipse phase lib functions -->
-{%- for func in functions %}
-[h: defineFunction("ep.{{func}}", "{{func}}@Lib:ep")]
+<!-- define UDF, these are accessible suing the direct function call syntax instead of the tedious macro
+calling syntax -->
+{%- for macro in functions %}
+[h: defineFunction("ep.{{macro.label}}", "{{macro.label}}@Lib:ep", {{macro.discardOutput}})]
 {%- endfor %}
-
-[r: "Welcome to Eclipse Phase !"]
