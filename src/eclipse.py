@@ -104,7 +104,7 @@ def morphs():
 def eclipseTable():
 	t = Table('Eclipse', 'imglib/ep_logo.png')
 	for i, (name,img) in enumerate([('stub', 'imglib/dft.png'), ('csheet', 'imglib/csheet.png')]):
-		t.append(Entry(i, i, name, img))
+		t.append(Entry(i+1, i+1, name, img))
 	return t
 
 def skills():
@@ -204,13 +204,14 @@ def nameTable():
 	t = Table('Names', 'imglib/ep_logo.png')
 	with open('data/names.json', 'r') as jfile:
 		for i, name in enumerate(json.load(jfile)["male"]):
-			t.append(Entry(i, i, name, None))
+			t.append(Entry(i+1, i+1, name, None))
 	return t
 
 def morphTable():
 	t = Table('Morphs', 'imglib/ep_logo.png')
 	for i, m in enumerate(morphs()):
-		if m.icon: t.append(Entry(i, i, m.name, m.icon.fp))
+		if m.icon: t.append(Entry(i+1, i+1, m.name, m.icon.fp))
+	t.buildIndex()
 	return t
 
 
