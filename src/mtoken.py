@@ -236,7 +236,7 @@ class TProp(object):
 	"""Token property"""
 	# the template is the same for all instance, it's expensive to create 
 	# so a class attribute is a good option
-	templates = jinja2.Template('''      <entry>
+	template = jinja2.Template('''      <entry>
 	    <string>{{prop.name.lower()}}</string>
 	    <net.rptools.CaseInsensitiveHashMap_-KeyValue>
 	      <key>{{prop.name}}</key>
