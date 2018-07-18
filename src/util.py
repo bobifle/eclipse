@@ -67,21 +67,26 @@ def jenv():
 		_jenv.filters['json2mt'] = lambda s: s.replace(r"\"", r"\'")
 	return _jenv
 
+# a cache for the Images
 imgCache = {}
 
 class Img(object):
 	"""A PIL.Image higher layer for MT assets."""
 	def __init__(self, fp):
-		self.bytes = io.BytesIO()
 		self.fp = fp
-		# first try to get the img from the cache
-		img = imgCache.get(fp, None)
+		# first try to get the img and byte array from the cache
+		img, byteArray = imgCache.get(fp, (None, None))
 		if img is None:
+			# not in the cache, let's build the img
+			_bytes = io.BytesIO()
 			img = Image.open(fp)
-			img.save(self.bytes, format='png')
-			imgCache[fp] = img
+			img.save(_bytes, format='png')
+			byteArray = _bytes.getvalue()
+			imgCache[fp] = (img, byteArray)
+		# store the byte content, md5 for further use
+		self.bytes = byteArray
+		self._md5 = hashlib.md5(self.bytes).hexdigest()
 		self.x, self.y = img.size
-		self._md5 = hashlib.md5(self.bytes.getvalue()).hexdigest()
 
 	def __repr__(self): return "Img<%s,%s>" % (os.path.basename(self.fp), self.md5)
 

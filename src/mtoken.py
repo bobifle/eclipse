@@ -120,7 +120,7 @@ class Token(object):
 			for asset in self.assets.values():
 				zipme.writestr('assets/%s' % asset.md5, jenv().get_template('md5.template').render(name=asset.fp, extension='png', md5=asset.md5))
 				# zip the img itself
-				zipme.writestr('assets/%s.png' % asset.md5, asset.bytes.getvalue())
+				zipme.writestr('assets/%s.png' % asset.md5, asset.bytes)
 			# build thumbnails
 			zipme.writestr('thumbnail', self.icon.thumbnail(50,50).getvalue())
 			zipme.writestr('thumbnail_large', self.icon.thumbnail(500,500).getvalue())
@@ -204,7 +204,7 @@ class NPC(Token):
 		properties = [TProp(k,v) for k,v in itertools.chain(self.attributes.iteritems(), self.skills.iteritems())]
 		properties.extend([TProp(attr, json.dumps(getattr(self, attr))) for attr in ['morph', 'ware', 'weapons']])
 		# XXX ugly patch convert morph name into a string, need a reliable way to convert json string into mt property value
-		for p in properties: 
+		for p in properties:
 			if p.name.lower() == "morph": p.value= p.value.replace('"', '')
 		return properties
 
@@ -234,7 +234,7 @@ class Morph(Character):
 
 class TProp(object):
 	"""Token property"""
-	# the template is the same for all instance, it's expensive to create 
+	# the template is the same for all instance, it's expensive to create
 	# so a class attribute is a good option
 	template = jinja2.Template('''      <entry>
 	    <string>{{prop.name.lower()}}</string>
