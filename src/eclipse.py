@@ -125,8 +125,8 @@ def pcs():
 		chars = json.load(jfile, object_hook = Character.from_json)
 	# assign to each player character their macro
 	for tok in chars:
-		tok.macros.append(SMacro("Sheet", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
-		tok.macros.append(SMacro("Resleeve", '[macro("Resleeve@Lib:ep"): ""]', 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Display", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Resleeve", smacros['Resleeve'], 'Sheet', ('white', 'blue')))
 	return chars
 
 def npcs():

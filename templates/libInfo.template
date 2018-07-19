@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
   <title>[r:json.get(data, "cat")]</title>
   </head>
-  <body background="[r: tableImage("Eclipse", 1)]">
+  <body background="[r: tableImage("Eclipse", 2)]">
   <div class=""><div class="statblock">
   <div class="cname">[r: json.get(data, "name")] - [r:json.get(data,"cat")]</div>
   [h: summary=json.get(data, "sum")]

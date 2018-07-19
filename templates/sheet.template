@@ -8,7 +8,7 @@
  <link rel="stylesheet" type="text/css" href="ep_css@Lib:ep">
  <title>{ getName()} Details</title>
  </head>
- <body background='[r: tableImage("Eclipse", 1)]'>
+ <body background='[r: tableImage("Eclipse", 2)]'>
 <table>
   <tr>
     [foreach(page, pages,""), code: {
