@@ -238,3 +238,4 @@ if __name__== '__main__':
 		with open("logs/profile.log", "w") as pfile:
 			ps = pstats.Stats(profile, stream=pfile).sort_stats('cumulative')
 			ps.print_stats()
+			log.warning("Completed in %s seconds, %s calls." % (ps.total_tt, ps.total_calls))
