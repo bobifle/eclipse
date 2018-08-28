@@ -221,10 +221,9 @@ def morphTable():
 	t.buildIndex()
 	return t
 
-
-def main(options):
-	configureLogger(options.verbose)
-	if options.clean:
+def main(opt):
+	configureLogger(opt.verbose)
+	if opt.clean:
 		log.warning("cleaning the build directory")
 		shutil.rmtree('build')
 	zone = Zone('Library')

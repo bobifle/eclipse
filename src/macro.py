@@ -105,3 +105,7 @@ class CssMacro(Macro):
 		with open(self.fp, 'r') as css:
 			return css.read()
 
+	@property
+	def template(self): raise NotImplementedError()
+
+

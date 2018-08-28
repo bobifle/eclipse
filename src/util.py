@@ -41,7 +41,7 @@ def configureLogger(verbose):
 		ch.setFormatter(formatter)
 		mLog.addHandler(ch)
 
-	mLog.setLevel(logging.DEBUG) # don't filter anythig let the handlers to the filtering
+	mLog.setLevel(logging.DEBUG) # don't filter anything let the handlers to the filtering
 	if not os.path.exists('logs'): os.makedirs('logs')
 	fh = logging.FileHandler(os.path.join('logs', mLog.name+'.log'), mode="w") # mode w will erase previous logs
 	fh.setLevel(logging.DEBUG)
