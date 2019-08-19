@@ -35,6 +35,14 @@ class Token(object):
 			return ret
 		return dct
 
+	def to_dict(self):
+		d = dict(self.__dict__)
+		# XXX uncaching _guid could bring problems ???
+		for cache in ['_md5', '_img', '_content', '_guid']:
+			d.pop(cache)
+		d['macros'] = [m.to_dict() for m in d['macros']]
+		return d
+
 	def __init__(self):
 		self._md5 = self.sentinel
 		self._img = self.sentinel
@@ -200,7 +208,7 @@ class NPC(Token):
 	def states(self): return []
 	@property
 	def props(self):
-		# XXX there's a glitch, npcs have a struture like skills = {'foo': 50, 'bar':40} whiel pcs have skills= [{'foo':50}, {'bar':40}]
+		# XXX there's a glitch, npcs have a struture like skills = {'foo': 50, 'bar':40} while pcs have skills= [{'foo':50}, {'bar':40}]
 		properties = [TProp(k,v) for k,v in itertools.chain(self.attributes.iteritems(), self.skills.iteritems())]
 		properties.extend([TProp(attr, json.dumps(getattr(self, attr))) for attr in ['morph', 'ware', 'weapons']])
 		# XXX ugly patch convert morph name into a string, need a reliable way to convert json string into mt property value

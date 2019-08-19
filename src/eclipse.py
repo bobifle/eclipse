@@ -127,6 +127,13 @@ def pcs():
 	for tok in chars:
 		tok.macros.append(SMacro("Display", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
 		tok.macros.append(SMacro("Resleeve", smacros['Resleeve'], 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Get Tokens", '''[h: baseURL = "http://localhost:5000/api/v1.0"]
+[h: response = REST.get(baseURL + "/tokens", 0)]
+<br>
+Response: 
+<pre>
+[r: json.indent(response, 2)]
+</pre>''', 'Sheet', ('white', 'blue')))
 	return chars
 
 def npcs():

@@ -27,6 +27,8 @@ class Macro(object):
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
 
+	def to_dict(self): return dict(self.__dict__)
+
 	@property
 	def label(self): return self._label
 
@@ -78,7 +80,7 @@ class TMacro(Macro):
 			self._template = jenv().get_template(self.tmpl)
 		return self._template
 class SMacro(Macro):
-	"""Template Macro"""
+	"""String Macro"""
 	@property
 	def template(self):
 		if self._template is self.sentinel:
