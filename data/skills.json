@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Infiltrate",
+    "type": ["Active", "Physical"],
+    "aptitude": "Reflexes",
+    "description": "Infiltrate is the art of escaping detection.",
+    "use": "Use Infiltrate to sneak past a guard, hide from a search party, blend into a crowd, shadow someone, conceal an object, or evade a sensor system. It is opposed by Perceive skill, though anyone not actively searching suffers a distraction modifier; against a group, use the highest Perceive skill among them. Infiltrate is best handled as a task action covering a specified distance, rather than rolling each action turn.",
+    "specializations": ["Blend In", "Hide", "Shadow", "Sneak"]
+  },
+  {
+    "name": "Melee",
+    "type": ["Active", "Combat"],
+    "aptitude": "Somatics",
+    "description": "Melee deals with fighting, whether unarmed or with held or implanted weapons.",
+    "use": "Use Melee to punch, kick, grapple, or attack with a blade, club, or other weapon. Melee is opposed by Fray if dodging or by the opponent’s Melee skill if blocking or parrying.",
+    "specializations": ["Blades", "Clubs", "Disarm", "Grapple", "Implants", "Unarmed"]
+  }
+]

@@ -10,11 +10,9 @@ log = getLogger(__name__)
 cachedMacro = {}
 
 class Macro(object):
-	sentinel = object()
-
 	def __init__(self, label, tmpl, group, colors, others=None):
 		self.tmpl = tmpl
-		self._template = self.sentinel
+		self._template = None
 		self._label = label
 		self.colors = colors
 		self.cattr = ['cognition', 'intuition', 'reflex', 'savvy', 'somatics', 'willpower'] # XXX eclipse specific in lib
@@ -22,7 +20,7 @@ class Macro(object):
 		self.others = others if (others is not None) else {}
 		self.allowPlayerEdits = 'false'
 		self.autoExecute = 'true'
-		self._command = self.sentinel
+		self._command = None
 
 	def __str__(self): return '%s<%s,grp=%s>' % (self.__class__.__name__, self.label, self.group)
 	def __repr__(self): return str(self)
@@ -64,7 +62,7 @@ class Macro(object):
 		if self.label in cachedMacro:
 			log.debug("Using cached macro %s" % self)
 			return cachedMacro[self.label]
-		if self._command is self.sentinel:
+		if self._command is None:
 			self._command = self.template.render(macro=self, **self.others).encode("utf-8")
 			if self.cachable:
 				cachedMacro[self.label] = self._command
@@ -76,14 +74,14 @@ class TMacro(Macro):
 	"""Template Macro"""
 	@property
 	def template(self):
-		if self._template is self.sentinel:
+		if self._template is None:
 			self._template = jenv().get_template(self.tmpl)
 		return self._template
 class SMacro(Macro):
 	"""String Macro"""
 	@property
 	def template(self):
-		if self._template is self.sentinel:
+		if self._template is None:
 			self._template = jinja2.Template(self.tmpl)
 		return self._template
 	@property
