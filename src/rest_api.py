@@ -111,9 +111,18 @@ def _melee(attacker_id, defender_id):
 	dtok = _get_token(defender_id)
 	if atok is None or dtok is None: return None
 	aroll = _roll(atok.melee.value)
-	droll = _roll((dtok.fray and dtok.fray.value) or 50) # TODO
+	log.error(repr(atok.melee.value)) 
+	droll = _roll((dtok.fray and dtok.fray.value) or 50) # TODO use max(fray, melee)
+	hit = False 
+	if aroll['success']:
+		# defender failed it's a hit
+		if not droll['success'] : hit = True
+		# defender succeeded, crits trump high rolls
+		if droll['success']:
+			if aroll['crit'] == droll['crit']: hit = aroll['value'] > droll['value']
+			if aroll['crit'] != droll['crit']: hit = aroll['crit']
+	result = {'attacker': {'token_id': attacker_id, "roll": aroll}, 'defender': {'token_id': defender_id, 'roll' : droll}, 'hit': hit}
 
-	result = {'attacker': {'token': atok.name, "roll": aroll}, 'defender': {'token': dtok.name, 'roll' : droll}}
 	return result
 
 @app.route(uroot + '/melee/<int:attacker_id>/<int:defender_id>')
