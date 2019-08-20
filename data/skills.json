@@ -14,5 +14,13 @@
     "description": "Melee deals with fighting, whether unarmed or with held or implanted weapons.",
     "use": "Use Melee to punch, kick, grapple, or attack with a blade, club, or other weapon. Melee is opposed by Fray if dodging or by the opponent’s Melee skill if blocking or parrying.",
     "specializations": ["Blades", "Clubs", "Disarm", "Grapple", "Implants", "Unarmed"]
+  },
+  {
+    "name": "Fray",
+    "type": ["Active", "Combat"],
+    "aptitude": "Reflexes",
+    "description": "",
+    "use": "",
+    "specializations": []
   }
 ]

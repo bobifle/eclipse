@@ -20,9 +20,9 @@ morph_props='''[
 ]
 '''
 pc_props='''[
-{"name": "aptitudes", "showOnSheet": true, "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
+{"name": "aptitudes", "showOnSheet": true, "value": "COG {cognition} | INT {intuition} | REF {reflexes} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
 {"name": "pools", "showOnSheet": true, "value": "Ins {insight} | Mox {moxie} |Vig {vigor} | Flex {flex}"},
-{"name": "initiative", "showOnSheet": true, "value": "{(reflex + intuition)/5}"},
+{"name": "initiative", "showOnSheet": true, "value": "{(reflexes + intuition)/5}"},
 {"name": "lucidity", "showOnSheet": true, "value": "{willpower*2}"},
 {"name": "insanity", "showOnSheet": true, "value": "{lucidity*2}"},
 {"name": "trauma", "showOnSheet": true, "value": "{lucidity/5}"},
@@ -31,7 +31,7 @@ pc_props='''[
 ]
 '''
 npc_props='''[
-{"name": "aptitudes", "showOnSheet": "true", "value": "COG {cognition} | INT {intuition} | REF {reflex} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
+{"name": "aptitudes", "showOnSheet": "true", "value": "COG {cognition} | INT {intuition} | REF {reflexes} | SAV {savvy} | SOM {somatics} | WIL {willpower}"},
 {"name": "others", "showOnSheet": "true", "value": "WT {wound_th} | DR {DR} | DUR {durability} | TP {TP} | Armor {energy}/{kinetic}"}
 ]
 '''
@@ -107,15 +107,6 @@ def eclipseTable():
 		t.append(Entry(i+1, i+1, name, img))
 	return t
 
-def skills():
-	return json.dumps([dict(name=skill,apt=apt)for skill, apt in [
-		("persuade", "savvy"),
-		("deceive", "savvy"),
-		("fray", "reflex"),
-		("free_fall", "somatics"),
-		("interface", "cognition"),
-		]])
-
 def traits(): return fromCsv('data/data_traits.csv')
 
 def factions(): return fromCsv('data/data_factions.csv')
@@ -130,7 +121,7 @@ def pcs():
 		tok.macros.append(SMacro("Get Tokens", '''[h: baseURL = "http://localhost:5000/api/v1.0"]
 [h: response = REST.get(baseURL + "/tokens", 0)]
 <br>
-Response: 
+Response:
 <pre>
 [r: json.indent(response, 2)]
 </pre>''', 'Sheet', ('white', 'blue')))

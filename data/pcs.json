@@ -4,7 +4,7 @@
 	"morph": "sylph",
 	"attributes": [
 		{"somatics":10},
-		{"reflex": 15},
+		{"reflexes": 15},
 		{"savvy": 20},
 		{"intuition": 15},
 		{"cognition": 20},
@@ -33,7 +33,7 @@
 	"morph": "wirehead",
 	"attributes": [
 		{"somatics":15},
-		{"reflex": 20},
+		{"reflexes": 20},
 		{"savvy": 10},
 		{"intuition": 15},
 		{"cognition": 20},
@@ -57,7 +57,7 @@
 	"morph": "arachnoid",
 	"attributes": [
 		{"somatics":15},
-		{"reflex": 20},
+		{"reflexes": 20},
 		{"savvy": 15},
 		{"intuition": 20},
 		{"cognition": 15},
@@ -81,7 +81,7 @@
 	"morph": "futura",
 	"attributes": [
 		{"somatics":10},
-		{"reflex": 15},
+		{"reflexes": 15},
 		{"savvy": 15},
 		{"intuition": 20},
 		{"cognition": 15},

@@ -10,6 +10,7 @@ import json
 import re
 
 from util import jenv, Img, getLogger, guid
+from data import content
 
 log = getLogger(__name__)
 
@@ -19,6 +20,31 @@ def validate(propname):
 	for c in r':<>\!;,*$#':
 		if c in propname:
 			raise ValueError("Invalid property name '%s'" % propname)
+
+class SK(object):
+	"""Helper for performing skill check"""
+	def __init__(self, tok):
+		self.tok = tok
+	@staticmethod
+	def get(name):
+		"""get a skill from teh available skill list (skills.json)"""
+		sk = next((sk for sk in content['skills'] if sk['name'].lower() == name), None)
+		if sk is None: raise ValueError('"%s" is not a skill' % name)
+		return sk
+	def base_score(self, skill):
+		# compute the base score of a skill check, see STEP 6 of char creation
+		sk = self.get(skill)
+		base_score = getattr(self.tok, sk['aptitude'].lower()).value
+		# for fray and perceive, the we use apt x 2
+		if skill in ['fray', 'perceive']: base_score += base_score
+		return base_score
+	def __getattr__(self, name):
+		name = name.lower()
+		# defaulting, page 31
+		base = self.base_score(name)
+		# if the token has the skill add it to the base score
+		bonus =  getattr(self.tok, name).value if hasattr(self.tok, name) else 0
+		return {'skill' : name, 'value' : base+bonus, 'base' : base, 'can_crit': bool(bonus)}
 
 class Token(object):
 	sentinel = object()
@@ -78,6 +104,7 @@ class Token(object):
 	def __getattr__(self, attr):
 		for prop in object.__getattribute__(self, "props"):
 			if prop.name.lower() == attr.lower(): return prop
+		raise AttributeError("Token has no attribute %s" % attr)
 
 	@property
 	def states(self): raise NotImplementedError
@@ -111,8 +138,10 @@ class Token(object):
 
 	@property
 	def properties_xml(self):
-		content = jenv().get_template('token_properties.template').render(token=self).encode("utf-8")
-		return content or ''
+		return jenv().get_template('token_properties.template').render(token=self).encode("utf-8") or u''
+
+	@property
+	def skill_check(self): return SK(self)
 
 	def render(self): return self.content_xml
 
