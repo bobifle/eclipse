@@ -17,5 +17,7 @@ def json_files():
 
 content = json_files()
 
-skills = content['skills']
+skills = { sk['name'].lower(): sk for sk in content['skills'].iteritems()}
+aptitudes = { apt['name'].lower(): apt for apt in content['aptitudes'].iteritems()}
+pools = { pool['name'].lower(): pool for pool in content['pools'].iteritems()}
 

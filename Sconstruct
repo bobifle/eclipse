@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import itertools
+
+env= Environment()
+
+src = list(itertools.chain((Glob(('%s/*')%d) for d in ['src', 'data', 'templates'])))
+eclipse = env.Command('build/eclipse.cmpgn', src, 'python src/eclipse.py')
+env.Precious(eclipse)

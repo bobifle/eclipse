@@ -27,7 +27,7 @@ class SK(object):
 		self.tok = tok
 	@staticmethod
 	def get(name):
-		"""get a skill from teh available skill list (skills.json)"""
+		"""get a skill from the available skill list (skills.json)"""
 		sk = next((sk for sk in content['skills'] if sk['name'].lower() == name), None)
 		if sk is None: raise ValueError('"%s" is not a skill' % name)
 		return sk
@@ -60,12 +60,26 @@ class Token(object):
 				setattr(ret, k, v)
 			return ret
 		return dct
+	def from_maptool_json(cls, dct):
+		_type = dct.get("_type", None)
+		if _type is not None:
+			if _type.lower() != cls.__name__.lower():
+				raise ValueError("Wrong json type (%s) passed to class %s" % (_type, cls.__name__))
+			ret = cls()
+			ret.attributes, ret.pools, ret.skills = {}, {}, {}
+			for k,v in dct.iteritems():
+				validate(k)
+				setattr(ret, k, v)
+			return ret
+		return dct
+
 
 	def to_dict(self):
 		d = dict(self.__dict__)
 		# XXX uncaching _guid could bring problems ???
 		for cache in ['_md5', '_img', '_content', '_guid']:
 			d.pop(cache)
+		d.pop('assets')
 		d['macros'] = [m.to_dict() for m in d['macros']]
 		return d
 
@@ -87,6 +101,24 @@ class Token(object):
 
 	def __repr__(self):
 		return "%s<%s>"%(self.__class__.__name__, self.name)
+
+	@property
+	def key(self): return self.name.lower()
+	def __eq__(self, o): return self.key == o.key
+	def __ne__(self, o): return not self == o
+	def __hash__(self): return hash(self.key)
+
+	def update(self, other):
+		if self != other:
+			log.error("Cannot update a token with a different token %s != %s" % (self, other))
+			return
+		for k in other.to_dict():  # iterate only over serializable/json attributes
+			old = getattr(self, k)
+			new = getattr(other, k)
+			print k, self, other, old, new
+			if new != old:
+				log.debug("Updating property %s from %s to %s" % (k, getattr(self, k), v))
+				setattr(self, k, v)
 
 	# XXX system dependant ?
 	@property
@@ -292,6 +324,12 @@ class TProp(object):
 			log.debug("Unsupported property name %s, changing it to  %s" % (name, self.name))
 		validate(self.name)
 	def __repr__(self): return '%s<%s,%s>' % (self.__class__.__name__, self.shortname, self.value)
+
+	@property
+	def key(self): return self.name.lower(), self.value
+	def __hash__(self) : return hash(self.key)
+	def __eq__(self, other) : return self.key == other.key
+	def __ne__(self, other) : return self.key != other.key
 
 	@property
 	def shortname(self): return self.name[:3].upper()

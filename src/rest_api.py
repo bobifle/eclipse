@@ -4,21 +4,24 @@ from flask import Flask, abort, make_response, request, jsonify
 import logging
 import random
 from eclipse import pcs
+import mtoken
 from data import content
-log = logging.getLogger(__name__)
+log = logging.getLogger('eclipse' if __name__ == '__main__' else __name__)
 
 app = Flask(__name__)
+host = '192.168.200.7'
+port = 5123
 uroot = '/api'
 
-tokens = pcs()
+tokens = { tok.key: tok for tok in pcs()}
 
 @app.errorhandler(404)
 def not_found(error):
-	return make_response(jsonify({'error': 'Not Found'}), 404)
+	return make_response(jsonify({'error': str(error)}), 404)
 
 @app.errorhandler(400)
 def bad_request(error):
-	return make_response(jsonify({'error': 'Bad request', 'req' : 'json'}), 400)
+	return make_response(jsonify({'error': str(error), 'req' : 'json'}), 400)
 
 @app.route('/')
 def index():
@@ -27,7 +30,6 @@ def index():
 @app.route(uroot + '/<string:obj>', methods=['GET'])
 def get_object(obj):
 	if obj not in content: abort(404)
-
 	return jsonify({obj: content[obj]})
 
 ############## Tokens ##################
@@ -36,7 +38,7 @@ def _get_token(token_id):
 
 @app.route(uroot + '/tokens', methods=['GET'])
 def get_tokens():
-	return jsonify({'tokens':[t.to_dict() for t in tokens]})
+	return jsonify({'tokens':[t.to_dict() for t in tokens.values()]})
 
 @app.route(uroot + '/tokens/<int:token_id>', methods=['GET'])
 def get_token(token_id):
@@ -44,15 +46,23 @@ def get_token(token_id):
 	if token is None: abort(404)
 	return jsonify({'token': token.to_dict()})
 
-@app.route(uroot + '/tokens', methods = ['POST'])
+@app.route(uroot + '/token', methods = ['POST'])
 def create_token():
-	if not request.json:
-		abort(400)
-	token = {
-		'id' : max((t['id'] for t in tokens)) + 1,
-		'name' : request.json['name'],
-	}
-	tokens.append(token)
+	j = request.json
+	if not j: abort(400, "expecting json data")
+	if '_type' not in j: abort(400, 'The token msut have a type')
+	cls = getattr(mtoken, j['_type'], None)
+	if cls is None: abort(400, 'Type of Token "%s" unknown' % j['_type'])
+	token = cls.from_json(j)
+	print token, token.insight, token.__dict__
+	print j
+	if token.key not in tokens:
+		log.debug("Adding a new token %s" % token)
+		tokens[token.key] = token
+	else:
+		log.debug("Updating existing token %s" % token)
+		tokens[token.key].update(token)
+
 	return jsonify({'token': token.to_dict()}), 201
 
 ############## Rolls ##################
@@ -92,6 +102,17 @@ def roll_diff(diff): return jsonify(_roll(diff))
 @app.route(uroot + '/roll/<int:diff0>/<int:diff1>')
 def roll_contested(diff0, diff1): return jsonify(_roll_contested(diff0, diff1))
 
+############## SKill checks ##################
+def _skill_check(token_id, skill):
+	try:
+		return getattr(_get_token(token_id).skill_check, skill)
+	except Exception, e:
+		abort(400, str(e))
+
+
+@app.route(uroot + '/token/<int:token_id>/skill_check/<string:skill>')
+def skill_check(token_id, skill): return jsonify(_skill_check(token_id, skill))
+
 ############## Attacks ##################
 def _melee(attacker_id, defender_id):
 	atok = _get_token(attacker_id)
@@ -124,4 +145,4 @@ def melee(attacker_id, defender_id): return jsonify(_melee(attacker_id, defender
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.DEBUG)
 	app.config['PROPAGATE_EXCEPTIONS'] = True
-	app.run(debug=True)
+	app.run(debug=True, host=host, port=port)

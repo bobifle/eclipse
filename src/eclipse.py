@@ -13,6 +13,8 @@ from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args, fromCsv
 
+host = "192.168.200.7:5123"
+
 log = getLogger(lName)
 
 morph_props='''[
@@ -118,13 +120,24 @@ def pcs():
 	for tok in chars:
 		tok.macros.append(SMacro("Display", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
 		tok.macros.append(SMacro("Resleeve", smacros['Resleeve'], 'Sheet', ('white', 'blue')))
-		tok.macros.append(SMacro("Get Tokens", '''[h: baseURL = "http://localhost:5000/api/v1.0"]
+		tok.macros.append(SMacro("Get Tokens", '''[h: baseURL = "http://%s/api"]
 [h: response = REST.get(baseURL + "/tokens", 0)]
 <br>
 Response:
 <pre>
 [r: json.indent(response, 2)]
-</pre>''', 'Sheet', ('white', 'blue')))
+</pre>'''% host, 'Sheet', ('white', 'blue')))
+		tok.macros.append(SMacro("Post Me", '''[h: baseURL = "http://%s/api"]
+[h: jtoken = '{"_type": "Character"}']
+[h: jtoken = json.set(jtoken, "name", getName())]
+[h: props = getPropertyNamesRaw()]
+[foreach(prop, props, ""), CODE: {[h: jtoken = json.set(jtoken, prop, getProperty(prop))]}]
+[h: response = REST.post(baseURL + "/token", jtoken,"application/json; charset=utf-8", 0)]
+<br>
+Response:
+<pre>
+[r: json.indent(response, 2)]
+</pre>'''%host, 'Sheet', ('white', 'red')))
 	return chars
 
 def npcs():
