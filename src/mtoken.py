@@ -10,7 +10,7 @@ import json
 import re
 
 from util import jenv, Img, getLogger, guid
-from data import content
+from data import skills 
 
 log = getLogger(__name__)
 
@@ -25,15 +25,9 @@ class SK(object):
 	"""Helper for performing skill check"""
 	def __init__(self, tok):
 		self.tok = tok
-	@staticmethod
-	def get(name):
-		"""get a skill from the available skill list (skills.json)"""
-		sk = next((sk for sk in content['skills'] if sk['name'].lower() == name), None)
-		if sk is None: raise ValueError('"%s" is not a skill' % name)
-		return sk
 	def base_score(self, skill):
 		# compute the base score of a skill check, see STEP 6 of char creation
-		sk = self.get(skill)
+		sk = skills[skill]
 		base_score = getattr(self.tok, sk['aptitude'].lower()).value
 		# for fray and perceive, the we use apt x 2
 		if skill in ['fray', 'perceive']: base_score += base_score
@@ -44,7 +38,8 @@ class SK(object):
 		base = self.base_score(name)
 		# if the token has the skill add it to the base score
 		bonus =  getattr(self.tok, name).value if hasattr(self.tok, name) else 0
-		return {'skill' : name, 'value' : base+bonus, 'base' : base, 'can_crit': bool(bonus)}
+		# TODO: support 
+		return {'skill' : name, 'value' : min(base+bonus, 80), 'base' : base, 'bonus': bonus, 'can_crit': bool(bonus)}
 
 class Token(object):
 	sentinel = object()
@@ -72,7 +67,6 @@ class Token(object):
 				setattr(ret, k, v)
 			return ret
 		return dct
-
 
 	def to_dict(self):
 		d = dict(self.__dict__)

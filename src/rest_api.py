@@ -9,11 +9,13 @@ from data import content
 log = logging.getLogger('eclipse' if __name__ == '__main__' else __name__)
 
 app = Flask(__name__)
-host = '192.168.200.7'
+#host = '192.168.200.7'
+host = 'localhost'
 port = 5123
 uroot = '/api'
 
-tokens = { tok.key: tok for tok in pcs()}
+tokens = {tok.key: tok for tok in pcs()}
+print tokens
 
 @app.errorhandler(404)
 def not_found(error):
@@ -24,8 +26,7 @@ def bad_request(error):
 	return make_response(jsonify({'error': str(error), 'req' : 'json'}), 400)
 
 @app.route('/')
-def index():
-	return "Hello World"
+def index(): return "Hello World"
 
 @app.route(uroot + '/<string:obj>', methods=['GET'])
 def get_object(obj):
@@ -34,7 +35,7 @@ def get_object(obj):
 
 ############## Tokens ##################
 def _get_token(token_id):
-	return next((t for i, t in enumerate(tokens) if i == token_id), None)
+	return next((t for i, t in enumerate(tokens.values()) if i == token_id), None)
 
 @app.route(uroot + '/tokens', methods=['GET'])
 def get_tokens():
@@ -54,8 +55,6 @@ def create_token():
 	cls = getattr(mtoken, j['_type'], None)
 	if cls is None: abort(400, 'Type of Token "%s" unknown' % j['_type'])
 	token = cls.from_json(j)
-	print token, token.insight, token.__dict__
-	print j
 	if token.key not in tokens:
 		log.debug("Adding a new token %s" % token)
 		tokens[token.key] = token
@@ -102,13 +101,15 @@ def roll_diff(diff): return jsonify(_roll(diff))
 @app.route(uroot + '/roll/<int:diff0>/<int:diff1>')
 def roll_contested(diff0, diff1): return jsonify(_roll_contested(diff0, diff1))
 
+@app.route(uroot + '/roll/<int:diff0>/<int:diff1>.html')
+def roll_contested_html(diff0, diff1): return '<p>This is a p</p><p>Anoter <b>bold</b> p </p>'
+
 ############## SKill checks ##################
 def _skill_check(token_id, skill):
 	try:
 		return getattr(_get_token(token_id).skill_check, skill)
 	except Exception, e:
 		abort(400, str(e))
-
 
 @app.route(uroot + '/token/<int:token_id>/skill_check/<string:skill>')
 def skill_check(token_id, skill): return jsonify(_skill_check(token_id, skill))

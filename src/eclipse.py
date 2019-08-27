@@ -13,7 +13,8 @@ from cmpgn import Campaign, CProp, PSet
 from zone import Zone
 from util import lName, getLogger, configureLogger, parse_args, fromCsv
 
-host = "192.168.200.7:5123"
+#host = "192.168.200.7:5123"
+host = "localhost:5123"
 
 log = getLogger(lName)
 
