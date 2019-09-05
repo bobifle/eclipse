@@ -1,6 +1,5 @@
 [
   {
-    "_type": "Character",
     "attributes": [
       {
         "somatics": 10
@@ -66,7 +65,6 @@
     ]
   },
   {
-    "_type": "Character",
     "attributes": [
       {
         "somatics": 15
@@ -117,7 +115,6 @@
     ]
   },
   {
-    "_type": "Character",
     "attributes": [
       {
         "somatics": 15
@@ -168,7 +165,6 @@
     ]
   },
   {
-    "_type": "Character",
     "attributes": [
       {
         "somatics": 10

@@ -6,11 +6,13 @@ import difflib
 import itertools
 import glob
 import jinja2
-import json
 import re
+import collections
 
 from util import jenv, Img, getLogger, guid
-from data import skills 
+from data import content
+
+skills = content['skills']
 
 log = getLogger(__name__)
 
@@ -38,23 +40,67 @@ class SK(object):
 		base = self.base_score(name)
 		# if the token has the skill add it to the base score
 		bonus =  getattr(self.tok, name).value if hasattr(self.tok, name) else 0
-		# TODO: support 
+		# TODO: support
 		return {'skill' : name, 'value' : min(base+bonus, 80), 'base' : base, 'bonus': bonus, 'can_crit': bool(bonus)}
+
+class Proxy(collections.MutableMapping):
+	def __init__(self, owner, content):
+		object.__setattr__(self, 'content', content)
+		object.__setattr__(self, 'owner', owner)
+	def __getattr__(self, name):
+		if name in self.content: return self.content[name]
+		raise AttributeError('%s has not property "%s"' % (self.owner.__class__.__name__, name))
+	def __setattr__(self, name, v): self.content[name] = v
+	def __repr__(self): return "<%s %s>" % (self.__class__.__name__, self.content)
+	# Mutablemapping interface
+	def __iter__(self): return iter(self.content)
+	def __getitem__(self, k): return self.content[k]
+	def __setitem__(self, k, v): self.content[k] = v
+	def __delitem__(self, k): del self.content[k]
+	def __len__(self): return len(self.content)
+
+class PropProxy(Proxy):
+	subcategories = ["aptitudes", "skills", "pools"]
+	@property
+	def subs(self): return [getattr(self, cat) for cat in PropProxy.subcategories if cat in self.content]
+	def __init__(self, owner, content):
+		Proxy.__init__(self, owner, content)
+		for sub in self.subcategories:
+			content = self.content.get(sub, None)
+			if content is not None:
+				object.__setattr__(self, "_%s"%sub, content)
+				object.__setattr__(self, sub, Proxy(self, getattr(self, "_%s"%sub)))
+	def __getattr__(self, name):
+		try:
+			return Proxy.__getattr__(self, name)
+		except AttributeError:
+			# when a property is not found, look into the available subcategories
+			for sub in self.subs:
+				if hasattr(sub, name): return getattr(sub, name)
+			raise
+
+	def __setattr__(self, name, v):
+		sub = next(iter([sub for sub in self.subs if name in sub]), None)
+		if name not in self.content and sub:
+			setattr(sub, name, v)
+		Proxy.__setattr__(self, name, v)
+	@property
+	def flatten(self):
+		flat = {}
+		flat.update(**{k:v for k,v in self.iteritems() if k not in PropProxy.subcategories})
+		for sub in self.subs:
+			flat.update(**{k:v for k,v in sub.iteritems()})
+		return flat
 
 class Token(object):
 	sentinel = object()
 	@classmethod
 	def from_json(cls, dct):
-		_type = dct.get("_type", None)
-		if _type is not None:
-			if _type.lower() != cls.__name__.lower():
-				raise ValueError("Wrong json type (%s) passed to class %s" % (_type, cls.__name__))
-			ret = cls()
-			for k,v in dct.iteritems():
-				validate(k)
-				setattr(ret, k, v)
-			return ret
-		return dct
+		ret = cls()
+		for k,v in dct.iteritems():
+			validate(k)
+			setattr(ret, k, v)
+		return ret
 	def from_maptool_json(cls, dct):
 		_type = dct.get("_type", None)
 		if _type is not None:
@@ -82,6 +128,7 @@ class Token(object):
 		self._img = self.sentinel
 		self._guid = self.sentinel
 		self._content = self.sentinel
+		self._props = {}
 		self.macros = []
 		self.layer = 'TOKEN'
 		self.name = 'defaultName'
@@ -109,10 +156,9 @@ class Token(object):
 		for k in other.to_dict():  # iterate only over serializable/json attributes
 			old = getattr(self, k)
 			new = getattr(other, k)
-			print k, self, other, old, new
 			if new != old:
-				log.debug("Updating property %s from %s to %s" % (k, getattr(self, k), v))
-				setattr(self, k, v)
+				log.debug("Updating property %s from %s to %s" % (k, getattr(self, k), new))
+				setattr(self, k, new)
 
 	# XXX system dependant ?
 	@property
@@ -127,13 +173,14 @@ class Token(object):
 			'gargantuan': 'fwABAdFlFSoIAAAAKgABAQ==',
 		}[self.size.lower()]
 
-	def __getattr__(self, attr):
-		for prop in object.__getattribute__(self, "props"):
-			if prop.name.lower() == attr.lower(): return prop
-		raise AttributeError("Token has no attribute %s" % attr)
-
 	@property
 	def states(self): raise NotImplementedError
+
+	@property
+	def props(self): return PropProxy(self, self._props)
+
+	@property
+	def token_props(self): return [TProp(k,v) for k,v in self.props.flatten.iteritems()]
 
 	@property
 	def guid(self):
@@ -142,7 +189,7 @@ class Token(object):
 		return self._guid
 
 	@property
-	def type(self): return 'PC'
+	def token_type(self): return 'PC'
 
 	@property
 	def prop_type(self): return 'PC'
@@ -159,12 +206,12 @@ class Token(object):
 	@property
 	def content_xml(self):
 		if self._content is self.sentinel:
-			self._content = jenv().get_template('token_content.template').render(token=self).encode("utf-8")
+			self._content = jenv().get_template('token_content.template').render(token=self)
 		return self._content or ''
 
 	@property
 	def properties_xml(self):
-		return jenv().get_template('token_properties.template').render(token=self).encode("utf-8") or u''
+		return jenv().get_template('token_properties.template').render(token=self) or u''
 
 	@property
 	def skill_check(self): return SK(self)
@@ -176,7 +223,7 @@ class Token(object):
 		log.info("Zipping %s" % self)
 		if not os.path.exists('build'): os.makedirs('build')
 		with zipfile.ZipFile(os.path.join('build', '%s.rptok'%self.name), 'w') as zipme:
-			zipme.writestr('content.xml', self.content_xml.encode('utf-8'))
+			zipme.writestr('content.xml', self.content_xml)
 			zipme.writestr('properties.xml', self.properties_xml)
 			# default image for the token, right now it's a brown bear
 			# zip the xml file named with the md5 containing the asset properties
@@ -243,11 +290,9 @@ class IToken(Token):
 		self.snapToScale = 'false'
 		self.layer = 'BACKGROUND'
 	@property
-	def props(self): return []
-	@property
 	def states(self): return []
 	@property
-	def type(self): return 'Img'
+	def token_type(self): return 'Img'
 	@property
 	def prop_type(self): return 'Lib'
 
@@ -256,41 +301,26 @@ class Map(IToken): pass
 
 class NPC(Token):
 	@property
-	def type(self): return 'NPC'
+	def token_type(self): return 'NPC'
 	@property
 	def prop_type(self): return 'NPC'
 	@property
 	def states(self): return []
-	@property
-	def props(self):
-		# XXX there's a glitch, npcs have a struture like skills = {'foo': 50, 'bar':40} while pcs have skills= [{'foo':50}, {'bar':40}]
-		properties = [TProp(k,v) for k,v in itertools.chain(self.attributes.iteritems(), self.skills.iteritems())]
-		properties.extend([TProp(attr, json.dumps(getattr(self, attr))) for attr in ['morph', 'ware', 'weapons']])
-		# XXX ugly patch convert morph name into a string, need a reliable way to convert json string into mt property value
-		for p in properties:
-			if p.name.lower() == "morph": p.value= p.value.replace('"', '')
-		return properties
 
 class Character(Token):
 	def __init__(self, *args, **kwargs):
 		Token.__init__(self, *args, **kwargs)
 		self.hasSight = 'true'
-	def __repr__(self): return 'Char<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
-
-	@property
-	def props(self):
-		return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.skills, [{"morph": self.morph}])]
+	def __repr__(self): return 'Char<%s, %s, %s>' % (self.name, self.token_type, self.icon.fp)
 	@property
 	def states(self): return []
 
 class Morph(Character):
-	def __repr__(self): return 'Morph<%s, %s, %s>' % (self.name, self.type, self.icon.fp)
+	def __repr__(self): return 'Morph<%s, %s, %s>' % (self.name, self.token_type, self.icon.fp)
 	@property
 	def matchImg(self): return self.name
 	@property
-	def type(self): return 'Morph'
-	@property
-	def props(self): return [TProp(*next(attr.iteritems())) for attr in itertools.chain(self.attributes, self.pools, self.movements)]
+	def token_type(self): return 'Morph'
 	@property
 	def prop_type(self): return 'MORPH'
 
@@ -340,11 +370,10 @@ class LToken(Token):
 		self.icon = icon
 		self.size = 'huge'
 		self.images = []
-		self.props = []
 	@property
 	def states(self): return []
 	@property
-	def type(self): return 'Lib'
+	def token_type(self): return 'Lib'
 
 	def addImage(self, name, fp):
 		if not os.path.exists(fp): raise ValueError('image %s does not exists')

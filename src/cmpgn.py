@@ -38,7 +38,7 @@ class Campaign(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('cmpgn_content.template').render(cmpgn=self).encode("utf-8")
+		content = jenv().get_template('cmpgn_content.template').render(cmpgn=self)
 		return content or ''
 
 	@property
@@ -79,7 +79,8 @@ class CProp(object):
 		self.gmOnly = jd.get('gmOnly', "false")
 		self.ownerOnly = jd.get('ownerOnly', "false")
 	@classmethod
-	def fromTProp(cls, token_prop): return cls({"name": token_prop.name})
+	def fromData(cls, prop):
+		return cls({"name": prop})
 	def __repr__(self): return '%s<%s>' % (self.__class__.__name__, self.name)
 	def render(self):
 		return jinja2.Template('''            <net.rptools.maptool.model.TokenProperty>

@@ -43,7 +43,7 @@
                 <name>{{token.name}}</name>
                 <ownerType>0</ownerType>
                 <tokenShape>TOP_DOWN</tokenShape>
-                <tokenType>{{token.type}}</tokenType>
+                <tokenType>{{token.token_type}}</tokenType>
                 <layer>{{token.layer}}</layer>
                 <propertyType>{{token.prop_type}}</propertyType>
                 <tokenOpacity>1.0</tokenOpacity>
@@ -69,7 +69,7 @@
                 </state>
                 <propertyMapCI>
                   <store>
-	{%- for prop in token.props %}
+	{%- for prop in token.token_props %}
 	            {{prop.render()}}
 	{%- endfor%}
                   </store>

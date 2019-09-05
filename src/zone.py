@@ -22,7 +22,7 @@ class Zone(object):
 
 	@property
 	def content_xml(self):
-		content = jenv().get_template('zone_content.template').render(zone=self).encode("utf-8")
+		content = jenv().get_template('zone_content.template').render(zone=self)
 		return content or ''
 
 	def render(self): return self.content_xml
@@ -30,7 +30,7 @@ class Zone(object):
 	def build(self, tokens):
 		"""Build a campaign given the tokens, properties all json data."""
 		offsets = {"PC": (100,400,50), "Lib": (200, 50,150), "NPC":(100,500,50), "Morph": (100,700,50)}
-		by_type = lambda token_list, _type: (t for t in token_list if t.type==_type)
+		by_type = lambda token_list, _type: (t for t in token_list if t.token_type==_type)
 		for _type in offsets:
 			for index, tok in enumerate(by_type(tokens, _type)):
 				x,y,xscale = offsets[_type]

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-import csv
 import shutil
 import cProfile
 import pstats
@@ -11,7 +10,8 @@ from macro import CssMacro, TMacro, LibMacro, SMacro
 from mtable import Table, Entry
 from cmpgn import Campaign, CProp, PSet
 from zone import Zone
-from util import lName, getLogger, configureLogger, parse_args, fromCsv
+from util import lName, getLogger, configureLogger, parse_args
+from data import content
 
 #host = "192.168.200.7:5123"
 host = "localhost:5123"
@@ -77,32 +77,9 @@ smacros = {
 
 
 def morphs():
-	"""Fetch morphs from the csvFile"""
-	_morphs= []
-	with open('data/data_morphs.csv', 'r') as csvfile:
-		reader = csv.DictReader(csvfile)
-		for row in reader:
-			m = Morph()
-			m.name = row['name']
-			m.notes = row['desc']
-			m.category = row['type']
-			m.attributes = [
-				{'wound_th': int(row['WT'])},
-				{'durability': int(row['Durability'])},
-			]
-			m.pools = []
-			firstEd2Second = lambda attrList: int(sum((int(row[attr]) for attr in attrList))/2.5)
-			m.pools = [
-				{'insight': firstEd2Second(['COG', 'INT'])},
-				{'moxie': firstEd2Second(['SAV', 'WIL'])},
-				{'vigor': firstEd2Second(['REF', 'SOM'])},
-				{'flex': int(row['CP'])/20},
-			]
-			m.movements=[{"walker":[4,24]}]
-			# attach a sleeve macro
-			m.macros.append(TMacro("Sleeve", 'msleeve.template', 'Sleeve', ('white', 'blue')))
-			_morphs.append(m)
-	return _morphs
+	morphs = [Morph.from_json({'_props' : morph}) for morph in content['morphs']]
+	for m in morphs: m.name = m.props.name
+	return morphs
 
 def eclipseTable():
 	t = Table('Eclipse', 'imglib/ep_logo.png')
@@ -110,13 +87,12 @@ def eclipseTable():
 		t.append(Entry(i+1, i+1, name, img))
 	return t
 
-def traits(): return fromCsv('data/data_traits.csv')
+def traits(): return content["traits"]
 
-def factions(): return fromCsv('data/data_factions.csv')
+def factions(): return content["factions"]
 
 def pcs():
-	with open('data/pcs.json', 'r') as jfile:
-		chars = json.load(jfile, object_hook = Character.from_json)
+	chars = [Character.from_json({'_props': npc}) for npc in content['npcs']]
 	# assign to each player character their macro
 	for tok in chars:
 		tok.macros.append(SMacro("Display", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
@@ -166,10 +142,10 @@ def libMacros():
 		SMacro("isMorph", '''[h: macro.return="false"][h:ptype=getPropertyType()][h,if (pType=="MORPH"): macro.return="true"]''', 'func', ('white', 'black'))
 	]
 	macros.extend(funcs)
-	macros.extend([ LibMacro(trait['name'],'Traits', ('white','red'), trait) for trait in traits()])
-	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in factions()])
-	macros.extend([ LibMacro(sl['name'],'Sleights', ('white','blue'), sl) for sl in fromCsv('data/data_sleights.csv')])
-	# keep this one last, very important, as it is function of previous added macros
+	macros.extend([ LibMacro(trait['trait'],'Traits', ('white','red'), trait) for trait in content.traits])
+	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in content.factions])
+	macros.extend([ LibMacro(sl['sleight'],'Sleights', ('white','blue'), sl) for sl in content.sleights])
+	# XXX keep this one last, very important, as it is function of previous added macros
 	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': funcs}))
 	return macros
 
@@ -178,37 +154,35 @@ def libTokens():
 	libs = [LToken('Lib:ep', libMacros(), 'imglib/ep_logo.png')]
 	# the gear lib
 	emacros = []
-	for (group, fp ,colors) in [
-			('Gear', 'data/data_gear.csv', ('white', 'green')),
-			]:
-		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	for cat in (cat for cat in content if cat.startswith('gear_') and cat != 'gear_text'):
+		emacros.extend([LibMacro(item['name'], cat, ('white', 'green'), item) for item in content[cat]])
 	libs.append(LToken('Lib:gear', emacros, 'imglib/icons/backpack.png'))
-	emacros = []
-	for (group, fp ,colors) in [
-			('Melee Weapons', 'data/data_melee_weapons.csv', ('white', 'red')),
-			('Ranged Weapons', 'data/data_ranged_weapons.csv', ('white', 'red')),
-			]:
-		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
-	libs.append(LToken('Lib:weap', emacros, 'imglib/icons/ammo-box.png'))
-	emacros = []
-	for (group, fp ,colors) in [
-			('Armors', 'data/data_armor.csv', ('white', 'blue')),
-			]:
-		emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
-	libs.append(LToken('Lib:weap', emacros, 'imglib/icons/space-suit.png'))
+	# emacros = []
+	# for (group, fp ,colors) in [
+			# ('Melee Weapons', 'data/data_melee_weapons.csv', ('white', 'red')),
+			# ('Ranged Weapons', 'data/data_ranged_weapons.csv', ('white', 'red')),
+			# ]:
+		# emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	# libs.append(LToken('Lib:weap', emacros, 'imglib/icons/ammo-box.png'))
+	# emacros = []
+	# for (group, fp ,colors) in [
+			# ('Armors', 'data/data_armor.csv', ('white', 'blue')),
+			# ]:
+		# emacros.extend([LibMacro(item['name'], group, colors, item) for item in fromCsv(fp)])
+	# libs.append(LToken('Lib:weap', emacros, 'imglib/icons/space-suit.png'))
 	return libs
 
 def propertySets():
 	sets = [PSet('Lib', [])] # the Lib property set is empty for now
 	# Build the PC property type # XXX rebuilding pcs just for the first element :-/
 	sets.append(PSet('PC',
-		[CProp.fromTProp(p) for p in pcs()[0].props] + [CProp(p) for p in json.loads(pc_props)]
+		[CProp.fromData(p) for p in pcs()[0].props] + [CProp(p) for p in json.loads(pc_props)]
 		))
 	sets.append(PSet('MORPH',
-		[CProp.fromTProp(p) for p in morphs()[0].props] + [CProp(p) for p in json.loads(morph_props)]
+		[CProp.fromData(p) for p in morphs()[0].props] + [CProp(p) for p in json.loads(morph_props)]
 		))
 	sets.append(PSet('NPC',
-		[CProp.fromTProp(p) for p in npcs()[0].props] +[CProp(p) for p in json.loads(npc_props)]
+		[CProp.fromData(p) for p in npcs()[0].props] +[CProp(p) for p in json.loads(npc_props)]
 		))
 	return sets
 
