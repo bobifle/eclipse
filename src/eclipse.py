@@ -142,9 +142,6 @@ def libMacros():
 		SMacro("isMorph", '''[h: macro.return="false"][h:ptype=getPropertyType()][h,if (pType=="MORPH"): macro.return="true"]''', 'func', ('white', 'black'))
 	]
 	macros.extend(funcs)
-	macros.extend([ LibMacro(trait['trait'],'Traits', ('white','red'), trait) for trait in content.traits])
-	macros.extend([ LibMacro(faction['name'],'Factions', ('white','blue'), faction) for faction in content.factions])
-	macros.extend([ LibMacro(sl['sleight'],'Sleights', ('white','blue'), sl) for sl in content.sleights])
 	# XXX keep this one last, very important, as it is function of previous added macros
 	macros.append(TMacro("onCampaignLoad", 'onCampaignLoad.template', 'func', ('white', 'black'), {'functions': funcs}))
 	return macros
@@ -157,6 +154,8 @@ def libTokens():
 	for cat in (cat for cat in content if cat.startswith('gear_') and cat != 'gear_text'):
 		emacros.extend([LibMacro(item['name'], cat, ('white', 'green'), item) for item in content[cat]])
 	libs.append(LToken('Lib:gear', emacros, 'imglib/icons/backpack.png'))
+	for cat in ['traits', 'factions', 'sleights']:
+		libs.append(LToken('Lib:%s'%cat, [ LibMacro(item['name'], cat.capitalize(), ('white','red'), item) for item in content[cat]], 'imglib/icons/space-suit.png'))
 	# emacros = []
 	# for (group, fp ,colors) in [
 			# ('Melee Weapons', 'data/data_melee_weapons.csv', ('white', 'red')),
