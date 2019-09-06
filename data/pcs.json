@@ -1,217 +1,88 @@
 [
   {
-    "attributes": [
-      {
-        "somatics": 10
-      },
-      {
-        "reflexes": 15
-      },
-      {
-        "savvy": 20
-      },
-      {
-        "intuition": 15
-      },
-      {
-        "cognition": 20
-      },
-      {
-        "willpower": 20
-      }
-    ],
+    "aptitudes": {
+      "somatics": 10,
+      "reflexes": 15,
+      "savvy": 20,
+      "intuition": 15,
+      "cognition": 20,
+      "willpower": 20
+    },
     "morph": "sylph",
     "name": "Chi",
     "notes": "A native Martian, you were assigned male at birth in pre-Fall Noctis to a family of industrialists part of the Martian hyperelite.You're socially perceptive, with a gift for ingratiating yourself to potential contacts. Everyone needs a psychologist even if they don't know it.",
-    "pools": [
-      {
-        "insight": 1
-      },
-      {
-        "moxie": 3
-      },
-      {
-        "vigor": 1
-      },
-      {
-        "flex": 1
-      },
-      {
-        "ego_flex": 1
-      }
-    ],
-    "skills": [
-      {
-        "deceive": 50
-      },
-      {
-        "fray": 30
-      },
-      {
-        "free_fall": 35
-      },
-      {
-        "persuade": 50
-      },
-      {
-        "interface": 10
-      },
-      {
-        "melee": 0
-      },
-      {
-        "psi": 0
-      }
-    ]
+    "pools": {
+      "insight": 1,
+      "moxie": 3,
+      "vigor": 1,
+      "flex": 1,
+      "ego_flex": 1
+    },
+    "skills": {
+      "deceive": 50,
+      "fray": 30,
+      "free_fall": 35,
+      "persuade": 50,
+      "interface": 10,
+      "melee": 0,
+      "psi": 0
+    },
+    "id": "1e7b3980-c027-43b9-baeb-7929a49f239a",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
-    "attributes": [
-      {
-        "somatics": 15
-      },
-      {
-        "reflexes": 20
-      },
-      {
-        "savvy": 10
-      },
-      {
-        "intuition": 15
-      },
-      {
-        "cognition": 20
-      },
-      {
-        "willpower": 15
-      }
-    ],
+    "aptitudes": {
+      "somatics": 15,
+      "reflexes": 20,
+      "savvy": 10,
+      "intuition": 15,
+      "cognition": 20,
+      "willpower": 15
+    },
     "morph": "wirehead",
     "name": "Njal",
     "notes": "",
-    "pools": [
-      {
-        "insight": 4
-      },
-      {
-        "moxie": 0
-      },
-      {
-        "vigor": 2
-      },
-      {
-        "flex": 1
-      },
-      {
-        "ego_flex": 1
-      }
-    ],
-    "skills": [
-      {
-        "melee": 0
-      },
-      {
-        "psi": 0
-      }
-    ]
+    "pools": {
+      "insight": 4,
+      "moxie": 0,
+      "vigor": 2,
+      "flex": 1,
+      "ego_flex": 1
+    },
+    "skills": {
+      "melee": 0,
+      "psi": 0
+    },
+    "id": "857b1792-b5d3-428f-9ec6-4e1fad776db5",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
-    "attributes": [
-      {
-        "somatics": 15
-      },
-      {
-        "reflexes": 20
-      },
-      {
-        "savvy": 15
-      },
-      {
-        "intuition": 20
-      },
-      {
-        "cognition": 15
-      },
-      {
-        "willpower": 15
-      }
-    ],
-    "morph": "arachnoid",
-    "name": "Amal",
-    "notes": "",
-    "pools": [
-      {
-        "insight": 1
-      },
-      {
-        "moxie": 0
-      },
-      {
-        "vigor": 4
-      },
-      {
-        "flex": 2
-      },
-      {
-        "ego_flex": 1
-      }
-    ],
-    "skills": [
-      {
-        "melee": 55
-      },
-      {
-        "psi": 0
-      }
-    ]
-  },
-  {
-    "attributes": [
-      {
-        "somatics": 10
-      },
-      {
-        "reflexes": 15
-      },
-      {
-        "savvy": 15
-      },
-      {
-        "intuition": 20
-      },
-      {
-        "cognition": 15
-      },
-      {
-        "willpower": 20
-      }
-    ],
+    "aptitudes": {
+      "somatics": 10,
+      "reflexes": 15,
+      "savvy": 15,
+      "intuition": 20,
+      "cognition": 15,
+      "willpower": 20
+    },
     "morph": "futura",
     "name": "Svafa",
     "notes": "",
-    "pools": [
-      {
-        "insight": 1
-      },
-      {
-        "moxie": 0
-      },
-      {
-        "vigor": 4
-      },
-      {
-        "flex": 2
-      },
-      {
-        "ego_flex": 1
-      }
-    ],
-    "skills": [
-      {
-        "melee": 0
-      },
-      {
-        "psi": 0
-      }
-    ]
+    "pools": {
+      "insight": 1,
+      "moxie": 0,
+      "vigor": 4,
+      "flex": 2,
+      "ego_flex": 1
+    },
+    "skills": {
+      "melee": 0,
+      "psi": 0
+    },
+    "id": "0a7ba18b-c395-4672-8141-a17b84bcf7c5",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   }
 ]

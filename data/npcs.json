@@ -1,9 +1,9 @@
 [
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 53,
-      "TP": 6,
+    "aptitudes": {
+      "dr": 53,
+      "tp": 6,
       "cognition": 20,
       "durability": 35,
       "energy": 5,
@@ -20,21 +20,21 @@
     "morph": "bouncer",
     "name": "Josef Bves",
     "skills": {
-      "Deceive": 50,
-      "Fray": 40,
-      "Free Fall": 65,
-      "Guns": 60,
-      "Hardware_Industrial": 50,
-      "Infiltrate": 40,
-      "Interface": 60,
-      "Kinesics": 40,
-      "Know_Fa_Jing Projects": 40,
-      "Know_TITAN_Artifacts": 30,
-      "Medicine_Psychosurgery": 60,
-      "Melee": 50,
-      "Perceive": 60,
-      "Persuade": 50,
-      "Provoke": 60
+      "deceive": 50,
+      "fray": 40,
+      "free fall": 65,
+      "guns": 60,
+      "hardware_industrial": 50,
+      "infiltrate": 40,
+      "interface": 60,
+      "kinesics": 40,
+      "know_fa_jing projects": 40,
+      "know_titan_artifacts": 30,
+      "medicine_psychosurgery": 60,
+      "melee": 50,
+      "perceive": 60,
+      "persuade": 50,
+      "provoke": 60
     },
     "ware": [
       "Biomods",
@@ -47,13 +47,16 @@
     ],
     "weapons": [
       "Medium Pistol (DV 2d10, SA/BF/FA)"
-    ]
+    ],
+    "id": "627398e2-1f3d-4eb8-b7ba-3222fe052665",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 0,
-      "TP": 4,
+    "aptitudes": {
+      "dr": 0,
+      "tp": 4,
       "cognition": 20,
       "durability": 0,
       "energy": 0,
@@ -70,22 +73,25 @@
     "morph": "agent infomorph",
     "name": "Luke Best",
     "skills": {
-      "Free Fall": 40,
-      "Hardware_Electronics": 40,
-      "Infosec": 70,
-      "Interface": 70,
-      "Perceive": 50,
-      "Program": 45,
-      "Research": 60
+      "free fall": 40,
+      "hardware_electronics": 40,
+      "infosec": 70,
+      "interface": 70,
+      "perceive": 50,
+      "program": 45,
+      "research": 60
     },
     "ware": [],
-    "weapons": []
+    "weapons": [],
+    "id": "2d75769e-b520-459e-93b6-64f073a9a202",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 53,
-      "TP": 6,
+    "aptitudes": {
+      "dr": 53,
+      "tp": 6,
       "cognition": 20,
       "durability": 35,
       "energy": 0,
@@ -102,15 +108,15 @@
     "morph": "menton pod",
     "name": "DR. Ju Guo",
     "skills": {
-      "Deceive": 40,
-      "Fray": 25,
-      "Free Fall": 40,
-      "Interface": 60,
-      "Kinesics": 50,
-      "Know_Fa_Jing_Projects": 55,
-      "Perceive": 60,
-      "Persuade": 60,
-      "Provoke": 50
+      "deceive": 40,
+      "fray": 25,
+      "free fall": 40,
+      "interface": 60,
+      "kinesics": 50,
+      "know_fa_jing_projects": 55,
+      "perceive": 60,
+      "persuade": 60,
+      "provoke": 50
     },
     "ware": [
       "Biomods",
@@ -118,13 +124,16 @@
       "Mesh Inserts",
       "Mnemonics"
     ],
-    "weapons": []
+    "weapons": [],
+    "id": "673e8264-2fbc-4f32-ab68-c9defd27b3ea",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 50,
-      "TP": 3,
+    "aptitudes": {
+      "dr": 50,
+      "tp": 3,
       "cognition": 15,
       "durability": 25,
       "energy": 6,
@@ -141,18 +150,18 @@
     "morph": "dragonfly",
     "name": "Chang'e Jade",
     "skills": {
-      "Athletics": 50,
-      "Deceive": 40,
-      "Fray": 45,
-      "Free Fall": 50,
-      "Infiltrate": 40,
-      "Interface": 60,
-      "Kinesics": 55,
-      "Know_History": 60,
-      "Know_Mining_Ops": 45,
-      "Know_Mysteries": 60,
-      "Perceive": 60,
-      "Persuade": 50
+      "athletics": 50,
+      "deceive": 40,
+      "fray": 45,
+      "free fall": 50,
+      "infiltrate": 40,
+      "interface": 60,
+      "kinesics": 55,
+      "know_history": 60,
+      "know_mining_ops": 45,
+      "know_mysteries": 60,
+      "perceive": 60,
+      "persuade": 50
     },
     "ware": [
       "Access Jacks",
@@ -164,13 +173,16 @@
       "Prehensile Tail",
       "Wings"
     ],
-    "weapons": []
+    "weapons": [],
+    "id": "e881ea5e-b172-4587-88f5-5307956c52c7",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 53,
-      "TP": 4,
+    "aptitudes": {
+      "dr": 53,
+      "tp": 4,
       "cognition": 15,
       "durability": 35,
       "energy": 6,
@@ -187,15 +199,15 @@
     "morph": "security pod",
     "name": "Constable Yu",
     "skills": {
-      "Fray": 50,
-      "Free Fall": 50,
-      "Guns": 45,
-      "Interface": 40,
-      "Kinesics": 50,
-      "Medicine_Paramedic": 50,
-      "Melee": 50,
-      "Perceive": 50,
-      "Persuade": 40
+      "fray": 50,
+      "free fall": 50,
+      "guns": 45,
+      "interface": 40,
+      "kinesics": 50,
+      "medicine_paramedic": 50,
+      "melee": 50,
+      "perceive": 50,
+      "persuade": 40
     },
     "ware": [
       "Access Jacks",
@@ -212,13 +224,16 @@
     ],
     "weapons": [
       "Medium Pistol (DV 2d10, SA/BF/FA)"
-    ]
+    ],
+    "id": "0301e1b7-883d-4f37-802f-fd7df288d048",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   },
   {
     "_type": "NPC",
-    "attributes": {
-      "DR": 53,
-      "TP": 2,
+    "aptitudes": {
+      "dr": 53,
+      "tp": 2,
       "cognition": 15,
       "durability": 35,
       "energy": 4,
@@ -235,16 +250,16 @@
     "morph": "bouncer",
     "name": "Thugs",
     "skills": {
-      "Athletics": 50,
-      "Fray": 40,
-      "Free Fall": 50,
-      "Guns": 40,
-      "Hardware_Demolitions": 50,
-      "Infiltrate": 30,
-      "Interface": 40,
-      "Kinesics": 30,
-      "Melee": 40,
-      "Perceive": 40
+      "athletics": 50,
+      "fray": 40,
+      "free fall": 50,
+      "guns": 40,
+      "hardware_demolitions": 50,
+      "infiltrate": 30,
+      "interface": 40,
+      "kinesics": 30,
+      "melee": 40,
+      "perceive": 40
     },
     "ware": [
       "Biomods",
@@ -257,6 +272,9 @@
     ],
     "weapons": [
       "Assault rifle (DV 2d10 + 2, SA/BF/FA)"
-    ]
+    ],
+    "id": "cff11253-d777-4fd0-a7e2-61724e4eaa23",
+    "reference": "",
+    "resource": "Eclipse Phase Second Edition"
   }
 ]

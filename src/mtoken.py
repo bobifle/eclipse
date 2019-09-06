@@ -62,8 +62,10 @@ class Proxy(collections.MutableMapping):
 class PropProxy(Proxy):
 	subcategories = ["aptitudes", "skills", "pools"]
 	@property
-	def subs(self): return [getattr(self, cat) for cat in PropProxy.subcategories if cat in self.content]
+	def subs(self):
+		return  [getattr(self, cat) for cat in PropProxy.subcategories if cat in self.content]
 	def __init__(self, owner, content):
+		if not isinstance(content, collections.MutableMapping): raise TypeError("Expecting a dict, bad Property content %s" % content)
 		Proxy.__init__(self, owner, content)
 		for sub in self.subcategories:
 			content = self.content.get(sub, None)

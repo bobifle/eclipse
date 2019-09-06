@@ -92,7 +92,7 @@ def traits(): return content["traits"]
 def factions(): return content["factions"]
 
 def pcs():
-	chars = [Character.from_json({'_props': npc}) for npc in content['npcs']]
+	chars = [Character.from_json({'_props': pc}) for pc in content['pcs']]
 	# assign to each player character their macro
 	for tok in chars:
 		tok.macros.append(SMacro("Display", '[macro("Sheet@Lib:ep"): "page=Ego; name=[r:getName()]"]', 'Sheet', ('white', 'blue')))
